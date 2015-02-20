@@ -37,7 +37,7 @@ public class UserResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
+//    @RolesAllowed(AuthoritiesConstants.ADMIN)
     ResponseEntity<User> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
         return Optional.ofNullable(userRepository.findOne(login))

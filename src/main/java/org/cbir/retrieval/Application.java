@@ -1,8 +1,10 @@
 package org.cbir.retrieval;
 
 import org.cbir.retrieval.config.Constants;
+import org.cbir.retrieval.service.RetrievalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.MetricFilterAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricRepositoryAutoConfiguration;
@@ -13,6 +15,7 @@ import org.springframework.core.env.SimpleCommandLinePropertySource;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -24,6 +27,9 @@ public class Application {
 
     @Inject
     private Environment env;
+
+    @Inject
+    private RetrievalService retrievalService;
 
     /**
      * Initializes retrieval.
@@ -38,6 +44,16 @@ public class Application {
         } else {
             log.info("Running with Spring profile(s) : {}", Arrays.toString(env.getActiveProfiles()));
         }
+
+        try {
+            log.info("init retrieval server");
+            retrievalService.initRetrievalServer();
+        } catch(Exception e) {
+            log.error(e.getMessage());
+            throw new IOException(e.getMessage());
+        }
+
+
     }
 
     /**

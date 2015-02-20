@@ -46,6 +46,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     private boolean activated = false;
 
+    @Transient
+    private String test = "kikoulol";
+
     @Size(min = 2, max = 5)
     @Column(name = "lang_key", length = 5)
     private String langKey;
@@ -183,5 +186,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
                 ", langKey='" + langKey + '\'' +
                 ", activationKey='" + activationKey + '\'' +
                 "}";
+    }
+
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
     }
 }

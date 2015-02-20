@@ -2,26 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <repositories>
-        <repository>
-            <id>spring-lib-milestone</id>
-            <name>Spring Framework Maven Milestone Repository</name>
-            <url>http://repo.spring.io/milestone/</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-plugin-milestone</id>
-            <name>Spring Framework Maven Milestone Repository</name>
-            <url>http://repo.spring.io/milestone/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <parent>
         <artifactId>spring-boot-starter-parent</artifactId>
         <groupId>org.springframework.boot</groupId>
         <version>1.2.0.RC2</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <groupId>org.cbir.retrieval</groupId>
@@ -61,52 +46,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-annotation</artifactId>
-            <version>${dropwizard-metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-ehcache</artifactId>
-            <version>${dropwizard-metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-graphite</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-healthchecks</artifactId>
-            <version>${dropwizard-metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-json</artifactId>
-            <version>${dropwizard-metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-jvm</artifactId>
-            <version>${dropwizard-metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-servlet</artifactId>
-            <version>${dropwizard-metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-servlets</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>metrics-healthchecks</artifactId>
-                    <groupId>io.dropwizard.metrics</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.fallabs</groupId>
+            <artifactId>kyotocabinet-java</artifactId>
+            <version>1.24</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -126,6 +68,16 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-json-org</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>commons-lang</groupId>-->
+        <!--<artifactId>commons-lang</artifactId>-->
+        <!--<version>2.6</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>2.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -173,16 +125,16 @@
             <version>${metrics-spring.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.codahale.metrics</groupId>
                     <artifactId>metrics-annotation</artifactId>
+                    <groupId>com.codahale.metrics</groupId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.codahale.metrics</groupId>
                     <artifactId>metrics-core</artifactId>
+                    <groupId>com.codahale.metrics</groupId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.codahale.metrics</groupId>
                     <artifactId>metrics-healthchecks</artifactId>
+                    <groupId>com.codahale.metrics</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -215,6 +167,55 @@
             <version>${commons-lang.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-annotation</artifactId>
+            <version>${dropwizard-metrics.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-ehcache</artifactId>
+            <version>${dropwizard-metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-graphite</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-healthchecks</artifactId>
+            <version>${dropwizard-metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-json</artifactId>
+            <version>${dropwizard-metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
+            <version>${dropwizard-metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-servlet</artifactId>
+            <version>${dropwizard-metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-servlets</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>metrics-healthchecks</artifactId>
+                    <groupId>io.dropwizard.metrics</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>${javax.inject.version}</version>
@@ -228,11 +229,47 @@
             <artifactId>joda-time-hibernate</artifactId>
             <version>${joda-time-hibernate.version}</version>
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>commons-io</groupId>-->
+        <!--<artifactId>commons-io</artifactId>-->
+        <!--<version>1.4</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.15</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jms</artifactId>
+                    <groupId>javax.jms</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jmxri</artifactId>
+                    <groupId>com.sun.jmx</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jmxtools</artifactId>
+                    <groupId>com.sun.jdmk</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj-core.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.cbir</groupId>
+            <artifactId>JavaImageRetrieval</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -240,8 +277,8 @@
             <version>${hibernate.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
                     <artifactId>ehcache-core</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -257,6 +294,12 @@
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
             <version>${usertype-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -333,27 +376,59 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-spring-service-connector</artifactId>
+            <artifactId>spring-cloud-localconfig-connector</artifactId>
             <version>${spring-cloud.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-localconfig-connector</artifactId>
+            <artifactId>spring-cloud-spring-service-connector</artifactId>
             <version>${spring-cloud.version}</version>
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>com.google.collections</groupId>-->
+        <!--<artifactId>google-collections</artifactId>-->
+        <!--<version>1.0</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.6.2</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>spring-lib-milestone</id>
+            <name>Spring Framework Maven Milestone Repository</name>
+            <url>http://repo.spring.io/milestone/</url>
+        </repository>
+        <repository>
+            <id>in-project</id>
+            <name>In Project Repo</name>
+            <url>file://${project.basedir}/libs</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-plugin-milestone</id>
+            <name>Spring Framework Maven Milestone Repository</name>
+            <url>http://repo.spring.io/milestone/</url>
+        </pluginRepository>
+    </pluginRepositories>
     <build>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.xml</include>
                 </includes>
             </resource>
             <resource>
-                <directory>src/main/resources</directory>
                 <filtering>false</filtering>
+                <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>**/*.xml</exclude>
                 </excludes>
@@ -526,16 +601,6 @@
         </profile>
         <profile>
             <id>fast</id>
-            <properties>
-                <!-- log configuration -->
-                <logback.loglevel>DEBUG</logback.loglevel>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-undertow</artifactId>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -549,15 +614,19 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>prod</id>
+            <properties>
+                <!-- log configuration -->
+                <logback.loglevel>DEBUG</logback.loglevel>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <artifactId>spring-boot-starter-undertow</artifactId>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>prod</id>
             <build>
                 <plugins>
                     <plugin>
@@ -612,6 +681,12 @@
                 <!-- log configuration -->
                 <logback.loglevel>INFO</logback.loglevel>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>

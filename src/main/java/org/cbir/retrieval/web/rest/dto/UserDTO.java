@@ -20,6 +20,8 @@ public class UserDTO {
 
     private List<String> roles;
 
+    private String test;
+
     public UserDTO() {
     }
 
@@ -76,5 +78,13 @@ public class UserDTO {
         sb.append(", roles=").append(roles);
         sb.append('}');
         return sb.toString();
+    }
+
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
     }
 }
