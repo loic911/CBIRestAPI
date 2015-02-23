@@ -19,6 +19,8 @@ import javax.servlet.ServletContext;
 @Transactional
 public class RetrievalService {
 
+    public static String DEFAULT_STORAGE = "default";
+
     private final Logger log = LoggerFactory.getLogger(RetrievalService.class);
 
     @Autowired
@@ -41,7 +43,7 @@ public class RetrievalService {
         ConfigServer configServer = new ConfigServer("config/ConfigServer.prop");
         configServer.setStoreName("MEMORY");
         RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
-        server.createStorage("default");
+        server.createStorage(DEFAULT_STORAGE);
         return server;
     }
 

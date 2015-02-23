@@ -28,7 +28,7 @@ import java.util.TreeMap;
  * REST controller for managing users.
  */
 @RestController
-@RequestMapping("/app")
+@RequestMapping("/api")
 public class RetrievalResource {
 
     private final Logger log = LoggerFactory.getLogger(RetrievalResource.class);
@@ -36,7 +36,7 @@ public class RetrievalResource {
     @Inject
     private RetrievalService retrievalService;
 
-    @RequestMapping(value = "/api/server",
+    @RequestMapping(value = "/server",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -47,12 +47,4 @@ public class RetrievalResource {
             .map(server -> new ResponseEntity<>(new RetrievalServerJSON(server), HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
-
-//    private Map<String,Object> toJSON(RetrievalServer server) {
-//        Map<String,Object> map = new TreeMap<>();
-//        map.put("size",server.getSize());
-//        map.put("port",server.getPort());
-//        return map;
-//    }
 }
