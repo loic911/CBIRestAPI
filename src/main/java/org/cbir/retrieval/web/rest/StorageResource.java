@@ -1,6 +1,7 @@
 package org.cbir.retrieval.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.cbir.retrieval.domain.Storach;
 import org.cbir.retrieval.security.AuthoritiesConstants;
 import org.cbir.retrieval.service.RetrievalService;
 import org.cbir.retrieval.web.rest.dto.RetrievalServerJSON;
@@ -10,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import retrieval.server.RetrievalServer;
 import retrieval.storage.Storage;
 
@@ -37,13 +35,58 @@ public class StorageResource {
     @Inject
     private RetrievalService retrievalService;
 
-    @RequestMapping(
-        value = "/storage/{id}",
+    /**
+     * POST  /rest/storachs -> Create a new storach.
+     */
+    @RequestMapping(value = "/storages/{id}",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public void create(@PathVariable String id) {
+        log.debug("REST request to save storage : {}", id);
+        RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
+
+//        if(idStorage==null)
+//            throw new IllegalArgumentException("idSotrage is null");
+//
+//        if(retrievalServer.getStorage(idStorage)!=null) {
+//            throw new IllegalArgumentException("Storage "+ idStorage +" already exist!");
+//        }
+        try {
+            retrievalServer.createStorage(id);
+        } catch(Exception e) {
+              log.error(e.getMessage());
+        }
+
+    }
+
+    @RequestMapping(value="/storages",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
+    List<StorageJSON> getAll() {
+        log.debug("REST request to list storages : {}");
+
+        RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
+
+        List<StorageJSON> storagesJSON =
+            retrievalServer.getStorageList()
+                .stream()
+                .map(StorageJSON::new)
+                .collect(Collectors.toList());
+
+        return storagesJSON;
+    }
+
+
+    @RequestMapping(value = "/storages/{id}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @RolesAllowed(AuthoritiesConstants.USER)
-    ResponseEntity<StorageJSON> getStorage(@PathVariable String id) {
+    ResponseEntity<StorageJSON> get(@PathVariable String id) {
         log.debug("REST request to get storage : {}");
 
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
@@ -54,25 +97,26 @@ public class StorageResource {
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @RequestMapping(
-        value="/storage",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    /**
+     * DELETE  /rest/storachs/:id -> delete the "id" storach.
+     */
+    @RequestMapping(value = "/storages/{id}",
+        method = RequestMethod.DELETE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @RolesAllowed(AuthoritiesConstants.USER)
-    List<StorageJSON> listStorages() {
-        log.debug("REST request to list storages : {}");
-
+    public void delete(@PathVariable String id) {
+        log.debug("REST request to delete storage : {}", id);
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
-        List<StorageJSON> storagesJSON =
-            retrievalServer.getStorageList()
-            .stream()
-            .map(StorageJSON::new)
-            .collect(Collectors.toList());
+//        if(retrievalServer.getStorage(id)==null) {
+//            throw new IllegalArgumentException("Storage "+ idStorage +" not exist!");
+//
+        try {
+            retrievalServer.deleteStorage(id);
+        } catch(Exception e) {
+            log.error(e.getMessage());
+        }
 
-        return storagesJSON;
     }
 
 }
