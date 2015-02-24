@@ -45,7 +45,7 @@ public class StorageResourceTest {
         restStorageMockMvc.perform(get("/api/storage/"+RetrievalService.DEFAULT_STORAGE).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.storageName").value(RetrievalService.DEFAULT_STORAGE));
+            .andExpect(jsonPath("$.id").value(RetrievalService.DEFAULT_STORAGE));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class StorageResourceTest {
         restStorageMockMvc.perform(get("/api/storage").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$[0].storageName").value(RetrievalService.DEFAULT_STORAGE));
+            .andExpect(jsonPath("$[0].id").value(RetrievalService.DEFAULT_STORAGE));
     }
 
 
