@@ -7,26 +7,38 @@ import retrieval.storage.Storage;
  */
 public class StorageJSON {
 
-    Storage storage;
+    String name;
+
+    String id;
+
+    Long size;
+
+    Integer queueSize;
+
+    public StorageJSON() {
+    }
 
     public StorageJSON(Storage storage) {
-        this.storage = storage;
+        this.id = storage.getStorageName();
+        this.name = storage.getStorageName();
+        this.size = storage.getNumberOfItem();
+        this.queueSize = storage.getIndexQueueSize();
     }
 
     public String getId() {
-        return storage.getStorageName();
+        return id;
     }
 
     public String getStorageName() {
-        return storage.getStorageName();
+        return name;
     }
 
     public Long getSize() {
-        return storage.getNumberOfItem();
+        return size;
     }
 
     public Integer getQueueSize() {
-        return storage.getIndexQueueSize();
+        return queueSize;
     }
 
 }

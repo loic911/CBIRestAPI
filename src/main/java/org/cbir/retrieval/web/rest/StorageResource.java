@@ -38,12 +38,12 @@ public class StorageResource {
     /**
      * POST  /rest/storachs -> Create a new storach.
      */
-    @RequestMapping(value = "/storages/{id}",
+    @RequestMapping(value = "/storages",
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void create(@PathVariable String id) {
-        log.debug("REST request to save storage : {}", id);
+    public void create(@RequestBody StorageJSON storageJSON) {
+        log.debug("REST request to save storage : {}", storageJSON.getId());
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
 //        if(idStorage==null)
@@ -53,7 +53,7 @@ public class StorageResource {
 //            throw new IllegalArgumentException("Storage "+ idStorage +" already exist!");
 //        }
         try {
-            retrievalServer.createStorage(id);
+            retrievalServer.createStorage(storageJSON.getId());
         } catch(Exception e) {
               log.error(e.getMessage());
         }

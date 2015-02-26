@@ -3,6 +3,7 @@ package org.cbir.retrieval.web.rest;
 import org.cbir.retrieval.Application;
 import org.cbir.retrieval.domain.Storach;
 import org.cbir.retrieval.service.RetrievalService;
+import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,26 +65,61 @@ public class StorageResourceTest {
     public void createStorage() throws Exception {
         // Validate the database is empty (only default storage)
         assertThat(retrievalServer.getStorageList()).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT);
-
+        String name = "NEW_NAME";
         // Create the Storach
-        ResultActions result = restStorageMockMvc.perform(post("/api/storages/" + DEFAULT_NAME)
-            //.accept(MediaType.APPLICATION_JSON)).andReturn();
+        MvcResult result = restStorageMockMvc.perform(post("/api/storages")
+         //   .accept(MediaType.APPLICATION_JSON))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(new Storach())))
-            .andExpect(status().isOk());
+            .content("{\"id\":\""+name+"\"}")).andReturn();
+           // .andExpect(status().isOk());
         System.out.println("*****************");
-        System.out.println(result.andReturn().getResponse().getContentAsString());
-//        System.out.println(result.getResponse().getContentAsString());
-//        System.out.println(new String(result.getResponse().getContentAsByteArray()));
-//        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+
+
+
+
+
+//        System.out.println(result.getResolvedException().getMessage());
+//        System.out.println(result.getResolvedException().toString());
+
+
+
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
 
         // Validate the Storach in the database
         List<Storage> storages = retrievalServer.getStorageList();
         assertThat(storages).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT +1);
-        Storage storage = retrievalServer.getStorage(DEFAULT_NAME);
-        assertThat(storage.getStorageName()).isEqualTo(DEFAULT_NAME);
+        Storage storage = retrievalServer.getStorage(name);
+        assertThat(storage.getStorageName()).isEqualTo(name);
         assertThat(storage.getNumberOfItem()).isEqualTo(0);
     }
+
+//    @Test
+//    @Transactional
+//    public void createStorage() throws Exception {
+//        // Validate the database is empty (only default storage)
+//        assertThat(retrievalServer.getStorageList()).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT);
+//
+//        // Create the Storach
+//        ResultActions result = restStorageMockMvc.perform(post("/api/storages/" + DEFAULT_NAME)
+//            //.accept(MediaType.APPLICATION_JSON)).andReturn();
+//            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+//            .content(TestUtil.convertObjectToJsonBytes(new Storach())))
+//            .andExpect(status().isOk());
+//        System.out.println("*****************");
+//        System.out.println(result.andReturn().getResponse().getContentAsString());
+////        System.out.println(result.getResponse().getContentAsString());
+////        System.out.println(new String(result.getResponse().getContentAsByteArray()));
+////        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+//
+//        // Validate the Storach in the database
+//        List<Storage> storages = retrievalServer.getStorageList();
+//        assertThat(storages).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT +1);
+//        Storage storage = retrievalServer.getStorage(DEFAULT_NAME);
+//        assertThat(storage.getStorageName()).isEqualTo(DEFAULT_NAME);
+//        assertThat(storage.getNumberOfItem()).isEqualTo(0);
+//    }
 
     @Test
     public void testGetAllStorages() throws Exception {
