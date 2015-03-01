@@ -19,22 +19,22 @@
                         <h4 class="modal-title" id="myStorageLabel">Create or edit a Storage</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label>ID</label>
-                            <input type="text" class="form-control" name="id"
-                                   ng-model="storage.id" readonly>
-                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label>ID</label>-->
+                            <!--<input type="text" class="form-control" name="id"-->
+                                   <!--ng-model="storage.id" readonly>-->
+                        <!--</div>-->
 
                         <div class="form-group">
                             <label>Name</label>
                             <input type="text" class="form-control"
-                                   ng-model="storage.name">
+                                   ng-model="storage.id">
                         </div>
-                        <div class="form-group">
-                            <label>Size</label>
-                            <input type="number" class="form-control"
-                                   ng-model="storage.size">
-                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label>Size</label>-->
+                            <!--<input type="number" class="form-control"-->
+                                   <!--ng-model="storage.size">-->
+                        <!--</div>-->
 
 
                     </div>
@@ -55,7 +55,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <!--<th>ID</th>-->
                     <th>Name</th>
                     <th>Size</th>
                     <th></th>
@@ -63,15 +63,15 @@
             </thead>
             <tbody>
                 <tr ng-repeat="storage in storages">
-                    <td>{{storage.id}}</td>
-                    <td>{{storage.name}}</td>
+                    <!--<td>{{storage.id}}</td>-->
+                    <td>{{storage.storageName}}</td>
                     <td>{{storage.size}}</td>
                     <td>
-                        <button type="submit"
-                                ng-click="update(storage.id)"
-                                class="btn btn-default">
-                            <span class="glyphicon glyphicon-pencil"></span> Edit
-                        </button>
+                        <!--<button type="submit"-->
+                                <!--ng-click="update(storage.id)"-->
+                                <!--class="btn btn-default">-->
+                            <!--<span class="glyphicon glyphicon-pencil"></span> Edit-->
+                        <!--</button>-->
                         <button type="submit"
                                 ng-click="delete(storage.id)"
                                 class="btn btn-danger">

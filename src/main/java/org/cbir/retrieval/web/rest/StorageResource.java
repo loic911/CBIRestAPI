@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * REST controller for managing users.
+ * REST controller for managing storage.
  */
 @RestController
 @RequestMapping("/api")
@@ -36,7 +36,7 @@ public class StorageResource {
     private RetrievalService retrievalService;
 
     /**
-     * POST  /rest/storachs -> Create a new storach.
+     * POST -> Create a new storage.
      */
     @RequestMapping(value = "/storages",
         method = RequestMethod.POST,
@@ -46,12 +46,12 @@ public class StorageResource {
         log.debug("REST request to save storage : {}", storageJSON.getId());
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
-//        if(idStorage==null)
-//            throw new IllegalArgumentException("idSotrage is null");
-//
-//        if(retrievalServer.getStorage(idStorage)!=null) {
-//            throw new IllegalArgumentException("Storage "+ idStorage +" already exist!");
-//        }
+        if(idStorage==null)
+            throw new IllegalArgumentException("idSotrage is null");
+
+        if(retrievalServer.getStorage(idStorage)!=null) {
+            throw new IllegalArgumentException("Storage "+ idStorage +" already exist!");
+        }
         try {
             retrievalServer.createStorage(storageJSON.getId());
         } catch(Exception e) {
