@@ -46,12 +46,12 @@ public class StorageResource {
         log.debug("REST request to save storage : {}", storageJSON.getId());
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
-        if(idStorage==null)
-            throw new IllegalArgumentException("idSotrage is null");
-
-        if(retrievalServer.getStorage(idStorage)!=null) {
-            throw new IllegalArgumentException("Storage "+ idStorage +" already exist!");
-        }
+//        if(idStorage==null)
+//            throw new IllegalArgumentException("idSotrage is null");
+//
+//        if(retrievalServer.getStorage(idStorage)!=null) {
+//            throw new IllegalArgumentException("Storage "+ idStorage +" already exist!");
+//        }
         try {
             retrievalServer.createStorage(storageJSON.getId());
         } catch(Exception e) {

@@ -1,6 +1,7 @@
 package org.cbir.retrieval.config;
 
 import org.cbir.retrieval.config.locale.AngularCookieLocaleResolver;
+import org.cbir.retrieval.web.filter.LoggingInterceptor;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.MessageSource;
@@ -43,8 +44,9 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
     public void addInterceptors(InterceptorRegistry registry) {
         final LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
         localeChangeInterceptor.setParamName("language");
-
         registry.addInterceptor(localeChangeInterceptor);
+
+        registry.addWebRequestInterceptor(new LoggingInterceptor());
     }
 }
 
