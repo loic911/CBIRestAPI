@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import org.cbir.retrieval.domain.Storach;
 import org.cbir.retrieval.security.AuthoritiesConstants;
 import org.cbir.retrieval.service.RetrievalService;
+import org.cbir.retrieval.service.exception.StorageNotFoundException;
 import org.cbir.retrieval.web.rest.dto.RetrievalServerJSON;
 import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import retrieval.server.RetrievalServer;
 import retrieval.storage.Storage;
@@ -86,15 +88,19 @@ public class StorageResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @RolesAllowed(AuthoritiesConstants.USER)
-    ResponseEntity<StorageJSON> get(@PathVariable String id) {
+    ResponseEntity<StorageJSON> get(@PathVariable String id) throws StorageNotFoundException{
         log.debug("REST request to get storage : {}");
 
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
         Storage storage = retrievalServer.getStorage(id);
 
-        return Optional.ofNullable(storage)
-            .map(itStorage -> new ResponseEntity<>(new StorageJSON(itStorage), HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if(storage==null)
+            throw new StorageNotFoundException("Storage "+ id +" cannot be found!");
+
+        return new ResponseEntity<>(new StorageJSON(storage), HttpStatus.OK);
+//        return Optional.ofNullable(storage)
+//            .map(itStorage -> new ResponseEntity<>(new StorageJSON(itStorage), HttpStatus.OK))
+//            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
