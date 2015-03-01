@@ -1,6 +1,7 @@
 package org.cbir.retrieval.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.apache.commons.lang.StringUtils;
 import org.cbir.retrieval.domain.Authority;
 import org.cbir.retrieval.domain.PersistentToken;
 import org.cbir.retrieval.domain.User;
@@ -10,7 +11,6 @@ import org.cbir.retrieval.security.SecurityUtils;
 import org.cbir.retrieval.service.MailService;
 import org.cbir.retrieval.service.UserService;
 import org.cbir.retrieval.web.rest.dto.UserDTO;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

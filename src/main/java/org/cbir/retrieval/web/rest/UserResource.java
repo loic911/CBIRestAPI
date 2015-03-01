@@ -3,18 +3,16 @@ package org.cbir.retrieval.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.cbir.retrieval.domain.User;
 import org.cbir.retrieval.repository.UserRepository;
-import org.cbir.retrieval.security.AuthoritiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import java.util.Optional;
 
