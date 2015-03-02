@@ -5,6 +5,7 @@ import org.cbir.retrieval.security.AuthoritiesConstants;
 import org.cbir.retrieval.service.RetrievalService;
 import org.cbir.retrieval.service.exception.CBIRException;
 import org.cbir.retrieval.service.exception.ResourceNotFoundException;
+import org.cbir.retrieval.service.exception.ResourceNotValidException;
 import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +13,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import retrieval.server.RetrievalServer;
 import retrieval.storage.Storage;
 
 import javax.annotation.security.RolesAllowed;
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,11 +107,48 @@ public class ImageResource {
         } catch(Exception e) {
             throw new CBIRException(e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
+    @RequestMapping(value = "/images",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public void create(
+        @RequestParam Long id,
+        @RequestParam(value="storage") String idStorage,
+        @RequestParam String keys,
+        @RequestParam String values,
+        MultipartFile imageBytes
+    ) throws CBIRException
+    {
+        log.debug("REST request to create image : {}", id);
+        RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
+
+        Storage storage;
+        if(idStorage==null) {
+            storage = retrievalServer.getNextStorage();
+        } else {
+            storage = retrievalServer.getStorage(idStorage,true);
+        }
+
+        BufferedImage image;
+        try {
+            image = ImageIO.read(new ByteArrayInputStream(imageBytes.getBytes()));
+        } catch(IOException ex) {
+            throw new ResourceNotValidException("Image not valid:"+ex.toString());
+        }
 
 
+        if(keys!=null) {
+            String[] keysArray = keys.split(";");
+            String[] valuesArray = values.split(";");
+        }
+
+
+
+
+
+    }
 
 
 
