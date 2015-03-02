@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Created by lrollus on 01/03/15.
  */
 
-public class StorageNotFoundException extends CBIRException {
+public class ResourceNotFoundException extends CBIRException {
 
-    public StorageNotFoundException(String message) {
+    public ResourceNotFoundException(String message) {
         super(message,HttpStatus.NOT_FOUND);
     }
 

@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
  * Created by lrollus on 01/03/15.
  */
 
-public class RessourceAlreadyExistException extends CBIRException {
+public class ResourceAlreadyExistException extends CBIRException {
 
-    public RessourceAlreadyExistException(String message) {
+    public ResourceAlreadyExistException(String message) {
         super(message, HttpStatus.CONFLICT);
     }
 

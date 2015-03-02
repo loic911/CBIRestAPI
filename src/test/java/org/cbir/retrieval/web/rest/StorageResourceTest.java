@@ -1,11 +1,9 @@
 package org.cbir.retrieval.web.rest;
 
 import org.cbir.retrieval.Application;
-import org.cbir.retrieval.domain.Storach;
 import org.cbir.retrieval.service.RetrievalService;
-import org.cbir.retrieval.service.exception.RessourceAlreadyExistException;
-import org.cbir.retrieval.service.exception.StorageNotFoundException;
-import org.cbir.retrieval.web.rest.dto.StorageJSON;
+import org.cbir.retrieval.service.exception.ResourceAlreadyExistException;
+import org.cbir.retrieval.service.exception.ResourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +14,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.NestedServletException;
@@ -103,7 +100,7 @@ public class StorageResourceTest {
                 .content(String.format("{\"id\":\"%s\"}", name))).andReturn();
             assert false;
         } catch(NestedServletException e) {
-            assertThat(e.getCause().getClass()).isEqualTo(RessourceAlreadyExistException.class);
+            assertThat(e.getCause().getClass()).isEqualTo(ResourceAlreadyExistException.class);
         }
     }
 
@@ -132,7 +129,7 @@ public class StorageResourceTest {
                 .andExpect(status().isNotFound());
             assert false;
         } catch(NestedServletException e) {
-            assertThat(e.getCause().getClass()).isEqualTo(StorageNotFoundException.class);
+            assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
         }
     }
 
@@ -161,7 +158,7 @@ public class StorageResourceTest {
                 .accept(TestUtil.APPLICATION_JSON_UTF8)).andReturn();
             assert false;
         } catch(NestedServletException e) {
-            assertThat(e.getCause().getClass()).isEqualTo(StorageNotFoundException.class);
+            assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
         }
     }
 }

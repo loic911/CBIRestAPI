@@ -3,8 +3,8 @@ package org.cbir.retrieval.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.cbir.retrieval.security.AuthoritiesConstants;
 import org.cbir.retrieval.service.RetrievalService;
-import org.cbir.retrieval.service.exception.RessourceAlreadyExistException;
-import org.cbir.retrieval.service.exception.StorageNotFoundException;
+import org.cbir.retrieval.service.exception.ResourceAlreadyExistException;
+import org.cbir.retrieval.service.exception.ResourceNotFoundException;
 import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +39,12 @@ public class StorageResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void create(@RequestBody StorageJSON storageJSON) throws RessourceAlreadyExistException{
+    public void create(@RequestBody StorageJSON storageJSON) throws ResourceAlreadyExistException {
         log.debug("REST request to save storage : {}", storageJSON.getId());
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
         if(retrievalServer.getStorage(storageJSON.getId())!=null) {
-            throw new RessourceAlreadyExistException("Storage "+ storageJSON.getId() +" already exist!");
+            throw new ResourceAlreadyExistException("Storage "+ storageJSON.getId() +" already exist!");
         }
 
         try {
@@ -52,7 +52,6 @@ public class StorageResource {
         } catch(Exception e) {
               log.error(e.getMessage());
         }
-
     }
 
     @RequestMapping(value="/storages",
@@ -81,14 +80,14 @@ public class StorageResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @RolesAllowed(AuthoritiesConstants.USER)
-    ResponseEntity<StorageJSON> get(@PathVariable String id) throws StorageNotFoundException{
+    ResponseEntity<StorageJSON> get(@PathVariable String id) throws ResourceNotFoundException {
         log.debug("REST request to get storage : {}");
 
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
         Storage storage = retrievalServer.getStorage(id);
 
         if(storage==null)
-            throw new StorageNotFoundException("Storage "+ id +" cannot be found!");
+            throw new ResourceNotFoundException("Storage "+ id +" cannot be found!");
 
         return new ResponseEntity<>(new StorageJSON(storage), HttpStatus.OK);
 //        return Optional.ofNullable(storage)
@@ -106,7 +105,7 @@ public class StorageResource {
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
         if(retrievalServer.getStorage(id)==null)
-            throw new StorageNotFoundException("Storage "+ id +" cannot be found!");
+            throw new ResourceNotFoundException("Storage "+ id +" cannot be found!");
 
         try {
             retrievalServer.deleteStorage(id);
