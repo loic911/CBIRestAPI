@@ -3,6 +3,8 @@ package org.cbir.retrieval.web.rest;
 import org.cbir.retrieval.Application;
 import org.cbir.retrieval.domain.Storach;
 import org.cbir.retrieval.service.RetrievalService;
+import org.cbir.retrieval.service.exception.RessourceAlreadyExistException;
+import org.cbir.retrieval.service.exception.StorageNotFoundException;
 import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.NestedServletException;
 import retrieval.server.RetrievalServer;
 import retrieval.storage.Storage;
 
@@ -66,23 +69,14 @@ public class StorageResourceTest {
         // Validate the database is empty (only default storage)
         assertThat(retrievalServer.getStorageList()).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT);
         String name = "NEW_NAME";
-        // Create the Storach
+
+        // Create the Storage
         MvcResult result = restStorageMockMvc.perform(post("/api/storages")
-         //   .accept(MediaType.APPLICATION_JSON))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content("{\"id\":\""+name+"\"}")).andReturn();
-           // .andExpect(status().isOk());
-        System.out.println("*****************");
-
-
-
-
 
 //        System.out.println(result.getResolvedException().getMessage());
 //        System.out.println(result.getResolvedException().toString());
-
-
-
 
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
         //System.out.println(result.andReturn().getResponse().getContentAsString());
@@ -95,31 +89,23 @@ public class StorageResourceTest {
         assertThat(storage.getNumberOfItem()).isEqualTo(0);
     }
 
-//    @Test
-//    @Transactional
-//    public void createStorage() throws Exception {
-//        // Validate the database is empty (only default storage)
-//        assertThat(retrievalServer.getStorageList()).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT);
-//
-//        // Create the Storach
-//        ResultActions result = restStorageMockMvc.perform(post("/api/storages/" + DEFAULT_NAME)
-//            //.accept(MediaType.APPLICATION_JSON)).andReturn();
-//            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-//            .content(TestUtil.convertObjectToJsonBytes(new Storach())))
-//            .andExpect(status().isOk());
-//        System.out.println("*****************");
-//        System.out.println(result.andReturn().getResponse().getContentAsString());
-////        System.out.println(result.getResponse().getContentAsString());
-////        System.out.println(new String(result.getResponse().getContentAsByteArray()));
-////        assertThat(result.getResponse().getStatus()).isEqualTo(200);
-//
-//        // Validate the Storach in the database
-//        List<Storage> storages = retrievalServer.getStorageList();
-//        assertThat(storages).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT +1);
-//        Storage storage = retrievalServer.getStorage(DEFAULT_NAME);
-//        assertThat(storage.getStorageName()).isEqualTo(DEFAULT_NAME);
-//        assertThat(storage.getNumberOfItem()).isEqualTo(0);
-//    }
+    @Test
+    @Transactional
+    public void createStorageAlreadyExist() throws Exception {
+        // Validate the database is empty (only default storage)
+        String name = retrievalServer.getStorageList().get(0).getStorageName();
+        int status=-1;
+        // Create the Storage
+        System.out.println("***********************");
+        try {
+            MvcResult result = restStorageMockMvc.perform(post("/api/storages")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(String.format("{\"id\":\"%s\"}", name))).andReturn();
+            assert false;
+        } catch(NestedServletException e) {
+            assertThat(e.getCause().getClass()).isEqualTo(RessourceAlreadyExistException.class);
+        }
+    }
 
     @Test
     public void testGetAllStorages() throws Exception {
@@ -140,9 +126,14 @@ public class StorageResourceTest {
 
     @Test
     public void testGetStorageUnknown() throws Exception {
-        restStorageMockMvc.perform(get("/api/storages/unknown")
-            .accept(MediaType.APPLICATION_JSON))
+        try {
+            restStorageMockMvc.perform(get("/api/storages/unknown")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+            assert false;
+        } catch(NestedServletException e) {
+            assertThat(e.getCause().getClass()).isEqualTo(StorageNotFoundException.class);
+        }
     }
 
     @Test
@@ -161,4 +152,16 @@ public class StorageResourceTest {
         assertThat(retrievalServer.getStorage(TO_DELETE_NAME)).isNull();
     }
 
+    @Test
+    @Transactional
+    public void deleteStorageNotExist() throws Exception {
+
+        try {
+            MvcResult result  = restStorageMockMvc.perform(delete("/api/storages/{id}", "unknown")
+                .accept(TestUtil.APPLICATION_JSON_UTF8)).andReturn();
+            assert false;
+        } catch(NestedServletException e) {
+            assertThat(e.getCause().getClass()).isEqualTo(StorageNotFoundException.class);
+        }
+    }
 }

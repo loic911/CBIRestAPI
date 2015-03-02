@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 class GlobalDefaultExceptionHandler {
     public static final String DEFAULT_ERROR_VIEW = "error";
 
-    @ExceptionHandler(value = StorageNotFoundException.class)
+    @ExceptionHandler(value = CBIRException.class)
     public ResponseEntity<ExceptionJSON> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
         System.out.println("****************************************");
         System.out.println("****************************************");
@@ -38,7 +38,7 @@ class GlobalDefaultExceptionHandler {
 
         // Otherwise setup and send the user to a default error-view.
         if(e instanceof CBIRException) {
-            return new ResponseEntity<ExceptionJSON>(new ExceptionJSON((CBIRException)e), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<ExceptionJSON>(new ExceptionJSON((CBIRException)e), ((CBIRException) e).getStatus());
         } else {
             throw e;
         }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class StorageNotFoundException extends CBIRException {
 
     public StorageNotFoundException(String message) {
-        super(message,"404");
+        super(message,HttpStatus.NOT_FOUND);
     }
 
 }

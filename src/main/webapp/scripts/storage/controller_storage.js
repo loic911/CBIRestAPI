@@ -2,14 +2,25 @@
 
 retrievalApp.controller('StorageController', function ($scope, resolvedStorage, Storage) {
 
+        $scope.cleanError = function() {
+            $scope.storage = {error : {create:null,delete:null}};
+        };
+        $scope.cleanError();
+
+
         $scope.storages = resolvedStorage;
 
         $scope.create = function () {
             Storage.save($scope.storage,
                 function () {
+                    $scope.cleanError();
                     $scope.storages = Storage.query();
                     $('#saveStorageModal').modal('hide');
                     $scope.clear();
+                },
+                function (e) {
+                    console.log(e);
+                    $scope.storage.error = e.data.message;
                 });
         };
 
@@ -21,6 +32,7 @@ retrievalApp.controller('StorageController', function ($scope, resolvedStorage, 
         $scope.delete = function (id) {
             Storage.delete({id: id},
                 function () {
+                    $scope.cleanError();
                     $scope.storages = Storage.query();
                 });
         };
@@ -28,4 +40,6 @@ retrievalApp.controller('StorageController', function ($scope, resolvedStorage, 
         $scope.clear = function () {
             $scope.storage = {name: null, size: null, id: null};
         };
+
+
     });

@@ -3,6 +3,7 @@ package org.cbir.retrieval.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.cbir.retrieval.security.AuthoritiesConstants;
 import org.cbir.retrieval.service.RetrievalService;
+import org.cbir.retrieval.service.exception.RessourceAlreadyExistException;
 import org.cbir.retrieval.service.exception.StorageNotFoundException;
 import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.slf4j.Logger;
@@ -38,16 +39,14 @@ public class StorageResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void create(@RequestBody StorageJSON storageJSON) {
+    public void create(@RequestBody StorageJSON storageJSON) throws RessourceAlreadyExistException{
         log.debug("REST request to save storage : {}", storageJSON.getId());
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
-//        if(idStorage==null)
-//            throw new IllegalArgumentException("idSotrage is null");
-//
-//        if(retrievalServer.getStorage(idStorage)!=null) {
-//            throw new IllegalArgumentException("Storage "+ idStorage +" already exist!");
-//        }
+        if(retrievalServer.getStorage(storageJSON.getId())!=null) {
+            throw new RessourceAlreadyExistException("Storage "+ storageJSON.getId() +" already exist!");
+        }
+
         try {
             retrievalServer.createStorage(storageJSON.getId());
         } catch(Exception e) {
@@ -97,24 +96,23 @@ public class StorageResource {
 //            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    /**
-     * DELETE  /rest/storachs/:id -> delete the "id" storach.
-     */
+
     @RequestMapping(value = "/storages/{id}",
         method = RequestMethod.DELETE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void delete(@PathVariable String id) {
+    public void delete(@PathVariable String id) throws Exception {
         log.debug("REST request to delete storage : {}", id);
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
-//        if(retrievalServer.getStorage(id)==null) {
-//            throw new IllegalArgumentException("Storage "+ idStorage +" not exist!");
-//
+        if(retrievalServer.getStorage(id)==null)
+            throw new StorageNotFoundException("Storage "+ id +" cannot be found!");
+
         try {
             retrievalServer.deleteStorage(id);
         } catch(Exception e) {
             log.error(e.getMessage());
+            throw e;
         }
 
     }
