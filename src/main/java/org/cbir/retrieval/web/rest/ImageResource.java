@@ -226,7 +226,7 @@ public class ImageResource {
         if(storageImage==null)
             throw new ResourceNotFoundException("Storage "+ storage +" cannot be found!");
 
-        if(storageImage.isPictureInIndex(id))
+        if(!storageImage.isPictureInIndex(id))
             throw new ResourceNotFoundException("Image "+ id +" cannot be found on storage "+storage+" !");
 
         try {

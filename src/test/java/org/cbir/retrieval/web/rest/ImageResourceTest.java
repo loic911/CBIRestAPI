@@ -321,12 +321,48 @@ public class ImageResourceTest {
         printIfError(result);
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
         Map<String, Object> map = parseStringToMap(result);
-        Long id = Long.parseLong((String)map.get("id"));
+        Long id = Long.parseLong((String) map.get("id"));
 
         assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
         assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
     }
 
+    @Test
+    @Transactional
+    public void deleteStorage() throws Exception {
+
+        Long id = (long)99;
+        BufferedImage img = ImageIO.read(new File(IMAGE_PATHS[0]));
+        Map<String,String> properties = new TreeMap<>();
+        properties.put("path",IMAGE_PATHS[0]);
+        properties.put("date",new Date().toString());
+
+        retrievalServer.getStorage(DEFAULT_STORAGE).indexPicture(img,id,properties);
+
+        System.out.println("TEST");
+        System.out.println(retrievalServer.getInfos());
+
+        assertThat(retrievalServer.getStorage(DEFAULT_STORAGE).getProperties(id)).isNotNull();
+
+        restStorageMockMvc.perform(delete("/api/storages/{storage}/images/{id}", DEFAULT_STORAGE,id)
+            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk());
+
+        assertThat(retrievalServer.getStorage(DEFAULT_STORAGE).isPictureInIndex(id)).isFalse();
+    }
+
+    @Test
+    @Transactional
+    public void deleteStorageNotExist() throws Exception {
+
+        try {
+            MvcResult result  = restStorageMockMvc.perform(delete("/api/storages/{storage}/images/{id}", DEFAULT_STORAGE,999)
+                .accept(TestUtil.APPLICATION_JSON_UTF8)).andReturn();
+            assert false;
+        } catch(NestedServletException e) {
+            assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
+        }
+    }
 
 
 
