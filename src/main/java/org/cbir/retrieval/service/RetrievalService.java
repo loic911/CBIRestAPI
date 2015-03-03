@@ -51,4 +51,8 @@ public class RetrievalService {
         return new RetrievalClient(new ConfigClient("config/ConfigClient.prop"),server);
     }
 
+    public void reset() throws Exception {
+        initRetrievalServer();
+    }
+
 }
