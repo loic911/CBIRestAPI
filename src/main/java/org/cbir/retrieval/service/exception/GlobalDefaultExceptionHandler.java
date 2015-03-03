@@ -2,6 +2,8 @@ package org.cbir.retrieval.service.exception;
 
 import org.cbir.retrieval.web.rest.dto.ExceptionJSON;
 import org.cbir.retrieval.web.rest.dto.StorageJSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 class GlobalDefaultExceptionHandler {
     public static final String DEFAULT_ERROR_VIEW = "error";
+
+    private final Logger log = LoggerFactory.getLogger(GlobalDefaultExceptionHandler.class);
 
     @ExceptionHandler(value = CBIRException.class)
     public ResponseEntity<ExceptionJSON> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
@@ -37,6 +41,7 @@ class GlobalDefaultExceptionHandler {
 //            throw e;
 
         // Otherwise setup and send the user to a default error-view.
+        log.error(e.toString());
         if(e instanceof CBIRException) {
             return new ResponseEntity<ExceptionJSON>(new ExceptionJSON((CBIRException)e), ((CBIRException) e).getStatus());
         } else {

@@ -70,6 +70,8 @@ public class ImageResourceTest {
         ImageResource imageResource = new ImageResource();
         ReflectionTestUtils.setField(imageResource, "retrievalService", retrievalService);
         this.restStorageMockMvc = MockMvcBuilders.standaloneSetup(imageResource).build();
+
+        retrievalService.reset();
         this.retrievalServer = retrievalService.getRetrievalServer();
 
         for(int i =1; i<5;i++) {
@@ -93,7 +95,7 @@ public class ImageResourceTest {
         restStorageMockMvc.perform(get("/api/images/{id}",1L).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(1L));
+            .andExpect(jsonPath("$.id").value("1"));
     }
 
     @Test
@@ -101,8 +103,7 @@ public class ImageResourceTest {
 
         try {
             restStorageMockMvc.perform(get("/api/images/{id}",0L).accept(MediaType.APPLICATION_JSON))
-                .andReturn();
-            assert false;
+                .andExpect(status().isNotFound());
         } catch(NestedServletException e) {
             assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
         }
@@ -111,10 +112,11 @@ public class ImageResourceTest {
     @Test
     public void testGetImageByStorage() throws Exception {
 
-        restStorageMockMvc.perform(get("/api/storages/{storage}/images/{id}",DEFAULT_STORAGE,1L).accept(MediaType.APPLICATION_JSON))
+        restStorageMockMvc.perform(get("/api/storages/{storage}/images/{id}",DEFAULT_STORAGE,1L)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(1L));
+            .andExpect(jsonPath("$.id").value("1"));
     }
 
     @Test
@@ -134,10 +136,10 @@ public class ImageResourceTest {
         restStorageMockMvc.perform(get("/api/images").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$[0].id").value(1L))
-            .andExpect(jsonPath("$[1].id").value(2L))
-            .andExpect(jsonPath("$[2].id").value(3L))
-            .andExpect(jsonPath("$[3].id").value(4L));
+            .andExpect(jsonPath("$[0].id").value("1"))
+            .andExpect(jsonPath("$[1].id").value("2"))
+            .andExpect(jsonPath("$[2].id").value("3"))
+            .andExpect(jsonPath("$[3].id").value("4"));
     }
 
     @Test
@@ -145,10 +147,10 @@ public class ImageResourceTest {
         restStorageMockMvc.perform(get("/api/storages/{storage}/images",DEFAULT_STORAGE).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$[0].id").value(1L))
-            .andExpect(jsonPath("$[1].id").value(2L))
-            .andExpect(jsonPath("$[2].id").value(3L))
-            .andExpect(jsonPath("$[3].id").value(4L));
+            .andExpect(jsonPath("$[0].id").value("1"))
+            .andExpect(jsonPath("$[1].id").value("2"))
+            .andExpect(jsonPath("$[2].id").value("3"))
+            .andExpect(jsonPath("$[3].id").value("4"));
     }
 
     @Test

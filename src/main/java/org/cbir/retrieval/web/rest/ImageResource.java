@@ -41,12 +41,12 @@ public class ImageResource {
     @Inject
     private RetrievalService retrievalService;
 
-    @RequestMapping(value = "/storages/{id}/images",
+    @RequestMapping(value = "/storages/{storage}/images/{id}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @RolesAllowed(AuthoritiesConstants.USER)
-    ResponseEntity<Map> getByStorage(@PathVariable Long id,@RequestParam String storage) throws ResourceNotFoundException {
+    ResponseEntity<Map> getByStorage(@PathVariable Long id,@PathVariable String storage) throws ResourceNotFoundException {
         log.debug("REST request to get image : {}");
 
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
@@ -68,24 +68,50 @@ public class ImageResource {
     @Timed
     @RolesAllowed(AuthoritiesConstants.USER)
     ResponseEntity<Map> get(@PathVariable Long id) throws ResourceNotFoundException {
-        log.debug("REST request to get image : {}");
+        log.debug("REST request to get image : "+id);
 
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
-        Optional<Map<String,String>> properties =
-            Optional.of(retrievalServer.getStorageList()
+        List<Map<String,String>> properties =
+            retrievalServer.getStorageList()
                 .parallelStream()
                 .map(x -> x.getProperties(id))
-                .filter(x -> x != null)
-                .reduce((previous, current) -> current)
-                .get());
+                .filter(x -> x != null && !x.isEmpty())
+                .collect(Collectors.toList());
 
-        if(!properties.isPresent())
+        log.info(properties.toString());
+
+        if(properties.isEmpty())
             throw new ResourceNotFoundException("Image "+ id +" cannot be found !");
 
-        return new ResponseEntity<>(properties.get(), HttpStatus.OK);
+        return new ResponseEntity<>(properties.get(0), HttpStatus.OK);
     }
 
+    @RequestMapping(value="/storages/{storage}/images",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
+    ResponseEntity<List> getAllByStorage(@PathVariable String storage) throws CBIRException{
+        log.debug("REST request to list images : {}");
+
+        RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
+        Storage storageImage = retrievalServer.getStorage(storage);
+        if(storageImage==null)
+            throw new ResourceNotFoundException("Storage "+ storage +" cannot be found!");
+
+        try {
+            List<Map<String,String>> map = storageImage.getAllPicturesMap()
+                .entrySet()
+                .stream()
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } catch(Exception e) {
+            throw new CBIRException(e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @RequestMapping(value="/images",
         method = RequestMethod.GET,
