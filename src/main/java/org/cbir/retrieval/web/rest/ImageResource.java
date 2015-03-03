@@ -141,19 +141,11 @@ public class ImageResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-//    public ResponseEntity<Map<String,String>> create(
-//        @RequestParam(value="id") Long idImage,
-//        @RequestParam(value="storage") String idStorage,
-//        @RequestParam String keys,
-//        @RequestParam String values,
-//        @RequestParam(defaultValue = "false") Boolean async,//http://stackoverflow.com/questions/17693435/how-to-give-default-date-values-in-requestparam-in-spring
-//        MultipartFile imageBytes
-//    ) throws CBIRException
   public ResponseEntity<Map<String,String>> create(
-    @RequestParam(value="id") Long idImage,
-    @RequestParam(value="storage") String idStorage,
-    @RequestParam String keys,
-    @RequestParam String values,
+    @RequestParam(value="id", required = false) Long idImage,
+    @RequestParam(value="storage",required = false) String idStorage,
+    @RequestParam(required = false) String keys,
+    @RequestParam(required = false) String values,
     @RequestParam(defaultValue = "false") Boolean async,//http://stackoverflow.com/questions/17693435/how-to-give-default-date-values-in-requestparam-in-spring
     MultipartHttpServletRequest request
     ) throws CBIRException

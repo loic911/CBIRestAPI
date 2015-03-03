@@ -1,9 +1,12 @@
 package org.cbir.retrieval.web.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.cbir.retrieval.Application;
 import org.cbir.retrieval.service.RetrievalService;
 import org.cbir.retrieval.service.exception.ResourceAlreadyExistException;
 import org.cbir.retrieval.service.exception.ResourceNotFoundException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +64,9 @@ public class ImageResourceTest {
         "testdata/images/crop5.jpg",
         "testdata/images/crop6.jpg",
         "testdata/images/crop7.jpg",
-        "testdata/images/crop8.jpg"
+        "testdata/images/crop8.jpg",
+        "testdata/images/crop1.jpg",
+        "testdata/images/crop1.jpg"
     };
 
     @Inject
@@ -177,146 +182,166 @@ public class ImageResourceTest {
         // Validate the database is empty (only default storage)
         assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
 
-        File file = new File(IMAGE_PATHS[4]);
-        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[4])));
+        String storage = DEFAULT_STORAGE;
+        Long id = 5l;
 
-        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[4])));
+        File file = new File(IMAGE_PATHS[(int)(id-1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
                 .file(file1)
-                .param("id", "5")
-                .param("storage", DEFAULT_STORAGE)
+                .param("id", id+"")
+                .param("storage", storage)
                 .param("keys", "date;test")
                 .param("values", "2015;test")
                 .param("async", "false")
         )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value("5"))
+            .andExpect(jsonPath("$.id").value(id+""))
             .andExpect(jsonPath("$.test").value("test"))
             .andReturn();
 
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
     }
 
-//        System.out.println(result.getResolvedException().getMessage());
-//        System.out.println(result.getResolvedException().toString());
-//
-//        assertThat(result.getResponse().getStatus()).isEqualTo(200);
-//        assertThat(result.getResponse().getStatus()).isEqualTo(200);
-//
-//
-//        Storage storage = retrievalServer.getStorage(DEFAULT_STORAGE);
-//        assertThat(storage.getNumberOfItem()).isEqualTo((NUMBER_OF_PICTURES_AT_BEGINNING + 1));
-//        assertThat(storage.getProperties(5l)).containsEntry("date","2015");
-//        assertThat(storage.getProperties(5l)).containsEntry("test","test");
+    @Test
+    public void testAddImageNoProperties() throws Exception {
+        // Validate the database is empty (only default storage)
+        assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
+
+        String storage = DEFAULT_STORAGE;
+        Long id = 6l;
+
+        File file = new File(IMAGE_PATHS[(int)(id-1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        MvcResult result = restStorageMockMvc.perform(
+            fileUpload("/api/images")
+                .file(file1)
+                .param("id", id + "")
+                .param("storage", storage)
+                .param("async", "false")
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(id+""))
+            .andReturn();
+
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+    }
 
 
-//    @RequestMapping(value = "/images",
-//        method = RequestMethod.POST,
-//        produces = MediaType.APPLICATION_JSON_VALUE)
-//    @Timed
-//    public ResponseEntity<Map<String,String>> create(
-//        @RequestParam(value="id") Long idImage,
-//        @RequestParam(value="storage") String idStorage,
-//        @RequestParam String keys,
-//        @RequestParam String values,
-//        @RequestParam(defaultValue = "false") Boolean async,//http://stackoverflow.com/questions/17693435/how-to-give-default-date-values-in-requestparam-in-spring
-//        MultipartFile imageBytes
-//    ) throws CBIRException
-//    {
-//
-//
-//
-//
-//
-//
-//
-//    @Test
-//    @Transactional
-//    public void createStorage() throws Exception {
-//        // Validate the database is empty (only default storage)
-//        assertThat(retrievalServer.getStorageList()).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT);
-//        String name = "NEW_NAME";
-//
-//        // Create the Storage
-//        MvcResult result = restStorageMockMvc.perform(post("/api/storages")
-//            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-//            .content("{\"id\":\""+name+"\"}")).andReturn();
-//
-////        System.out.println(result.getResolvedException().getMessage());
-////        System.out.println(result.getResolvedException().toString());
-//
-//        assertThat(result.getResponse().getStatus()).isEqualTo(200);
-//        //System.out.println(result.andReturn().getResponse().getContentAsString());
-//
-//        // Validate the Storach in the database
-//        List<Storage> storages = retrievalServer.getStorageList();
-//        assertThat(storages).hasSize(NUMBER_OF_STORAGE_AT_BOOTSTRAT +1);
-//        Storage storage = retrievalServer.getStorage(name);
-//        assertThat(storage.getStorageName()).isEqualTo(name);
-//        assertThat(storage.getNumberOfItem()).isEqualTo(0);
-//    }
-//
-//    @Test
-//    @Transactional
-//    public void createStorageAlreadyExist() throws Exception {
-//        // Validate the database is empty (only default storage)
-//        String name = retrievalServer.getStorageList().get(0).getStorageName();
-//        int status=-1;
-//        // Create the Storage
-//        System.out.println("***********************");
-//        try {
-//            MvcResult result = restStorageMockMvc.perform(post("/api/storages")
-//                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-//                .content(String.format("{\"id\":\"%s\"}", name))).andReturn();
-//            assert false;
-//        } catch(NestedServletException e) {
-//            assertThat(e.getCause().getClass()).isEqualTo(ResourceAlreadyExistException.class);
-//        }
-//    }
-//
-//
-//
-//
-//
-//
-//    @Test
-//    public void testGetStorageUnknown() throws Exception {
-//        try {
-//            restStorageMockMvc.perform(get("/api/storages/unknown")
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNotFound());
-//            assert false;
-//        } catch(NestedServletException e) {
-//            assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
-//        }
-//    }
-//
-//    @Test
-//    @Transactional
-//    public void deleteStorage() throws Exception {
-//        retrievalServer.createStorage(TO_DELETE_NAME);
-//
-//        assertThat(retrievalServer.getStorage(TO_DELETE_NAME)).isNotNull();
-//
-//        // Get the storach
-//        restStorageMockMvc.perform(delete("/api/storages/{id}", TO_DELETE_NAME)
-//            .accept(TestUtil.APPLICATION_JSON_UTF8))
-//            .andExpect(status().isOk());
-//
-//        // Validate the database is empty
-//        assertThat(retrievalServer.getStorage(TO_DELETE_NAME)).isNull();
-//    }
-//
-//    @Test
-//    @Transactional
-//    public void deleteStorageNotExist() throws Exception {
-//
-//        try {
-//            MvcResult result  = restStorageMockMvc.perform(delete("/api/storages/{id}", "unknown")
-//                .accept(TestUtil.APPLICATION_JSON_UTF8)).andReturn();
-//            assert false;
-//        } catch(NestedServletException e) {
-//            assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
-//        }
-//    }
+    @Test
+    public void testAddImagStorageNotExist() throws Exception {
+        // Validate the database is empty (only default storage)
+        assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
+
+        String storage = "STORAGE_testAddImagStorageNotExist";
+        Long id = 7l;
+
+        assertThat(retrievalServer.getStorage(storage)).isNull();
+
+        File file = new File(IMAGE_PATHS[(int)(id-1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        MvcResult result = restStorageMockMvc.perform(
+            fileUpload("/api/images")
+                .file(file1)
+                .param("id", id + "")
+                .param("storage", storage)
+                .param("async", "false")
+        )
+            .andReturn();
+
+        printIfError(result);
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        Map<String, Object> map = parseStringToMap(result);
+        assertThat(map.get("id")).isEqualTo(id+"");
+        assertThat(retrievalServer.getStorage(storage)).isNotNull();
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+    }
+
+    @Test
+    public void testAddImageWithNoStorage() throws Exception {
+        // Validate the database is empty (only default storage)
+        assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
+
+        Long id = 8l;
+
+        File file = new File(IMAGE_PATHS[(int)(id-1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        MvcResult result = restStorageMockMvc.perform(
+            fileUpload("/api/images")
+                .file(file1)
+                .param("id", id + "")
+                .param("async", "false")
+        )
+            .andReturn();
+
+        printIfError(result);
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        Map<String, Object> map = parseStringToMap(result);
+        String storage = (String)map.get("storage");
+
+
+        assertThat(retrievalServer.getStorage(storage)).isNotNull();
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+    }
+
+
+
+    @Test
+    public void testAddImageNoID() throws Exception {
+        // Validate the database is empty (only default storage)
+        assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
+
+        String storage = DEFAULT_STORAGE;
+
+        File file = new File(IMAGE_PATHS[(int)(8)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(8)])));
+
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(8)])));
+        MvcResult result = restStorageMockMvc.perform(
+            fileUpload("/api/images")
+                .file(file1)
+                    //.param("id", id + "")
+                .param("storage", storage)
+        )
+            .andReturn();
+
+        printIfError(result);
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        Map<String, Object> map = parseStringToMap(result);
+        Long id = Long.parseLong((String)map.get("id"));
+
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+    }
+
+
+
+
+    private void printIfError(MvcResult result) {
+        if(result.getResolvedException()!=null) {
+            System.out.println(result.getResolvedException().getMessage());
+            System.out.println(result.getResolvedException().toString());
+        }
+    }
+
+
+    private Map<String, Object> parseStringToMap(MvcResult result) throws java.io.IOException {
+        String response = result.getResponse().getContentAsString();
+        ObjectReader reader = new ObjectMapper().reader(Map.class);
+        return reader.readValue(response);
+    }
+
 }
