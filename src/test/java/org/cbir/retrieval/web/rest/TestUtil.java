@@ -18,6 +18,10 @@ public class TestUtil {
             MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
+
+    public static final MediaType APPLICATION_MULTIPART = new MediaType(
+        MediaType.MULTIPART_FORM_DATA.getType(),
+        MediaType.MULTIPART_FORM_DATA.getSubtype(), Charset.forName("utf8"));
     /**
      * Convert an object to JSON byte array.
      *

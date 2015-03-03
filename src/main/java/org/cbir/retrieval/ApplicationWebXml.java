@@ -4,7 +4,18 @@ import org.cbir.retrieval.config.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 
 /**
  * This is an helper Java class that provides an alternative to creating a web.xml.
@@ -19,6 +30,29 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
                 .showBanner(false)
                 .sources(Application.class);
     }
+
+    // Other methods omitted
+
+    // Other methods omitted
+//    @Bean
+//    public MultipartResolver multipartResolver() {
+//        return new StandardServletMultipartResolver();
+//    }
+//
+//    @Bean
+//    public MultipartConfigElement multipartConfigElement() {
+//        MultipartConfigFactory factory = new MultipartConfigFactory();
+//        factory.setMaxFileSize("128KB");
+//        factory.setMaxRequestSize("128KB");
+//        return factory.createMultipartConfig();
+//    }
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver c = new CommonsMultipartResolver();
+        c.setMaxUploadSize(100000);
+        return c;
+    }
+
 
     /**
      * Set a default profile if it has not been set.

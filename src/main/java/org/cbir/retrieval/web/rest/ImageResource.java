@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import retrieval.server.RetrievalServer;
 import retrieval.storage.Storage;
 import retrieval.storage.exception.AlreadyIndexedException;
@@ -140,13 +141,21 @@ public class ImageResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Map<String,String>> create(
-        @RequestParam(value="id") Long idImage,
-        @RequestParam(value="storage") String idStorage,
-        @RequestParam String keys,
-        @RequestParam String values,
-        @RequestParam(defaultValue = "false") Boolean async,//http://stackoverflow.com/questions/17693435/how-to-give-default-date-values-in-requestparam-in-spring
-        MultipartFile imageBytes
+//    public ResponseEntity<Map<String,String>> create(
+//        @RequestParam(value="id") Long idImage,
+//        @RequestParam(value="storage") String idStorage,
+//        @RequestParam String keys,
+//        @RequestParam String values,
+//        @RequestParam(defaultValue = "false") Boolean async,//http://stackoverflow.com/questions/17693435/how-to-give-default-date-values-in-requestparam-in-spring
+//        MultipartFile imageBytes
+//    ) throws CBIRException
+  public ResponseEntity<Map<String,String>> create(
+    @RequestParam(value="id") Long idImage,
+    @RequestParam(value="storage") String idStorage,
+    @RequestParam String keys,
+    @RequestParam String values,
+    @RequestParam(defaultValue = "false") Boolean async,//http://stackoverflow.com/questions/17693435/how-to-give-default-date-values-in-requestparam-in-spring
+    MultipartHttpServletRequest request
     ) throws CBIRException
     {
         log.debug("REST request to create image : {}", idImage);
@@ -161,7 +170,17 @@ public class ImageResource {
 
         BufferedImage image;
         try {
-            image = ImageIO.read(new ByteArrayInputStream(imageBytes.getBytes()));
+            System.out.println(request);
+            System.out.println(request.getMultipartHeaders("file"));
+
+            byte[] data = new byte[]{};
+            Map<String, MultipartFile> files = request.getFileMap();
+            for (MultipartFile file : files.values()) {
+                data = file.getBytes();
+            }
+
+            //image = ImageIO.read(new ByteArrayInputStream(imageBytes.getBytes()));
+            image = ImageIO.read(new ByteArrayInputStream(data));
         } catch(IOException ex) {
             throw new ResourceNotValidException("Image not valid:"+ex.toString());
         }
@@ -225,65 +244,4 @@ public class ImageResource {
             throw new CBIRException("Cannot delete image:"+e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    /**
-//     * POST -> Create a new storage.
-//     */
-//    @RequestMapping(value = "/storages",
-//        method = RequestMethod.POST,
-//        produces = MediaType.APPLICATION_JSON_VALUE)
-//    @Timed
-//    public void create(@RequestBody StorageJSON storageJSON) throws RessourceAlreadyExistException{
-//        log.debug("REST request to save storage : {}", storageJSON.getId());
-//        RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
-//
-//        if(retrievalServer.getStorage(storageJSON.getId())!=null) {
-//            throw new RessourceAlreadyExistException("Storage "+ storageJSON.getId() +" already exist!");
-//        }
-//
-//        try {
-//            retrievalServer.createStorage(storageJSON.getId());
-//        } catch(Exception e) {
-//              log.error(e.getMessage());
-//        }
-//
-//    }
-//
-//    @RequestMapping(value="/storages",
-//        method = RequestMethod.GET,
-//        produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    @Timed
-//    @RolesAllowed(AuthoritiesConstants.USER)
-//    List<StorageJSON> getAll() {
-//        log.debug("REST request to list storages : {}");
-//
-//        RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
-//
-//        List<StorageJSON> storagesJSON =
-//            retrievalServer.getStorageList()
-//                .stream()
-//                .map(StorageJSON::new)
-//                .collect(Collectors.toList());
-//
-//        return storagesJSON;
-//    }
-//
-
-//
-//
-
-
 }

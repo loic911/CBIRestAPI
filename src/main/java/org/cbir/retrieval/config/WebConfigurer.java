@@ -3,6 +3,7 @@ package org.cbir.retrieval.config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
 import com.codahale.metrics.servlets.MetricsServlet;
+import org.cbir.retrieval.ApplicationWebXml;
 import org.cbir.retrieval.web.filter.CachingHttpHeadersFilter;
 import org.cbir.retrieval.web.filter.StaticResourcesProductionFilter;
 import org.cbir.retrieval.web.filter.gzip.GZipServletFilter;
@@ -14,8 +15,13 @@ import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletCont
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.MimeMappings;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.inject.Inject;
 import javax.servlet.*;
@@ -54,8 +60,28 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         if (env.acceptsProfiles(Constants.SPRING_PROFILE_DEVELOPMENT)) {
             initH2Console(servletContext);
         }
+
+//        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
+//        ctx.register(ApplicationWebXml.class);
+//        ctx.setServletContext(servletContext);
+//        ctx.refresh();
+//        ServletRegistration.Dynamic dynamic = servletContext.addServlet("dispatcher", new DispatcherServlet(ctx));
+//        dynamic.addMapping("/");
+//        dynamic.setLoadOnStartup(1);
+//        dynamic.setMultipartConfig(ctx.getBean(MultipartConfigElement.class));
+
         log.info("Web application fully configured");
     }
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Set up Mime types.
@@ -160,5 +186,19 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         h2ConsoleServlet.addMapping("/console/*");
         h2ConsoleServlet.setInitParameter("-properties", "src/main/resources");
         h2ConsoleServlet.setLoadOnStartup(1);
+    }
+
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver commonsMultipartResolver(){
+        CommonsMultipartResolver c = new CommonsMultipartResolver();
+        c.setMaxUploadSize(100000);
+        return c;
+    }
+
+    @Bean
+    public CommonsMultipartResolver multipartResolver(){
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setMaxUploadSize(5242880);
+        return resolver;
     }
 }

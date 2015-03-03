@@ -9,11 +9,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.NestedServletException;
@@ -24,6 +26,9 @@ import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +50,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ImageResourceTest {
 
     public static String DEFAULT_STORAGE = "default";
+
+    public static long NUMBER_OF_PICTURES_AT_BEGINNING = 4;
 
     public static String[] IMAGE_PATHS = {
         "testdata/images/crop1.jpg",
@@ -77,9 +84,9 @@ public class ImageResourceTest {
         for(int i =1; i<5;i++) {
 
             Long id = (long)i;
-            BufferedImage img = ImageIO.read(new File(IMAGE_PATHS[i]));
+            BufferedImage img = ImageIO.read(new File(IMAGE_PATHS[i-1]));
             Map<String,String> properties = new TreeMap<>();
-            properties.put("path",IMAGE_PATHS[i]);
+            properties.put("path",IMAGE_PATHS[i-1]);
             properties.put("date",new Date().toString());
 
             retrievalServer
@@ -165,9 +172,57 @@ public class ImageResourceTest {
     }
 
 
+    @Test
+    public void testAddImage() throws Exception {
+        // Validate the database is empty (only default storage)
+        assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
+
+        File file = new File(IMAGE_PATHS[4]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[4])));
+
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[4])));
+        MvcResult result = restStorageMockMvc.perform(
+            fileUpload("/api/images")
+                .file(file1)
+                .param("id", "5")
+                .param("storage", DEFAULT_STORAGE)
+                .param("keys", "date;test")
+                .param("values", "2015;test")
+                .param("async", "false")
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value("5"))
+            .andExpect(jsonPath("$.test").value("test"))
+            .andReturn();
+
+    }
+
+//        System.out.println(result.getResolvedException().getMessage());
+//        System.out.println(result.getResolvedException().toString());
+//
+//        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+//        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+//
+//
+//        Storage storage = retrievalServer.getStorage(DEFAULT_STORAGE);
+//        assertThat(storage.getNumberOfItem()).isEqualTo((NUMBER_OF_PICTURES_AT_BEGINNING + 1));
+//        assertThat(storage.getProperties(5l)).containsEntry("date","2015");
+//        assertThat(storage.getProperties(5l)).containsEntry("test","test");
 
 
-
+//    @RequestMapping(value = "/images",
+//        method = RequestMethod.POST,
+//        produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Timed
+//    public ResponseEntity<Map<String,String>> create(
+//        @RequestParam(value="id") Long idImage,
+//        @RequestParam(value="storage") String idStorage,
+//        @RequestParam String keys,
+//        @RequestParam String values,
+//        @RequestParam(defaultValue = "false") Boolean async,//http://stackoverflow.com/questions/17693435/how-to-give-default-date-values-in-requestparam-in-spring
+//        MultipartFile imageBytes
+//    ) throws CBIRException
+//    {
 //
 //
 //
