@@ -73,5 +73,15 @@ retrievalApp.controller('ImageController', function ($location,$scope,$routePara
             $scope.image = {name: null, size: null, id: null};
         };
 
+        $scope.printProperties = function(image) {
+            var output = '';
+            for (var property in image) {
+                if(image.hasOwnProperty(property))
+                    output += property + ': ' + image[property]+'<br>';
+            }
+            bootbox.alert(output, function() {
+            });
+        };
+
 
     });
