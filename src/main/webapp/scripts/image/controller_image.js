@@ -1,6 +1,6 @@
 'use strict';
 
-retrievalApp.controller('ImageController', function ($scope,$routeParams, Image,ImageByStorage) {
+retrievalApp.controller('ImageController', function ($location,$scope,$routeParams, Image,ImageByStorage, Storage) {
 
         $scope.cleanError = function() {
             $scope.image = {error : {create:null,delete:null}};
@@ -13,8 +13,34 @@ retrievalApp.controller('ImageController', function ($scope,$routeParams, Image,
             } else {
                 $scope.images = Image.query();
             }
-        }
+        };
         $scope.list($routeParams["storage"]);
+
+        $scope.storageChanged = function(selected) {
+            console.log(selected);
+            if(selected!="ALL STORAGES")
+                $location.url("/storage/"+selected+"/image");
+            else
+                $location.url("/image");
+        };
+
+        $scope.storages = Storage.query(
+            function(storage) {
+                $scope.storages.unshift({id:"ALL STORAGES"});
+                console.log(storage);
+                $scope.selectedStorage = {selected: ($routeParams["storage"]?$routeParams["storage"]:"ALL STORAGES")};
+            }
+        );
+
+        $scope.selectedStorage = $routeParams["storage"];
+
+        //$scope.$watch("selectedStorage", function() {
+        //
+        //    if($scope.selectedStorage!=null) {
+        //        $location.('storage', $scope.selectedStorage.id);
+        //    }
+        //});
+
 
         $scope.create = function () {
             Image.save($scope.image,

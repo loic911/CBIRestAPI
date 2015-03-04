@@ -1,10 +1,34 @@
 <div>
 
+    <div class="container row">
+        <div class="col-md-4">
+
+        </div>
+        <div class="col-md-4 row">
+            <div class="col-md-6">
+                <select class="form-control"
+                        ng-model="selectedStorage.selected"
+                        ng-options="storage.id as storage.id for storage in storages"
+                        ng-change="storageChanged(selectedStorage.selected)">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+        </div>
+    </div>
+
+
     <h2>Images</h2>
 
     <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#saveImageModal" ng-click="clear()">
         <span class="glyphicon glyphicon-flash"></span> Create a new Image
     </button>
+
+
+
+
+
     <div class="modal fade" id="saveImageModal" tabindex="-1" role="dialog" aria-labelledby="myImageLabel"
          aria-hidden="true">
         <div class="modal-dialog">
@@ -18,6 +42,9 @@
                                 ng-click="clear()">&times;</button>
                         <h4 class="modal-title" id="myImageLabel">Create or edit a Image</h4>
                     </div>
+
+
+
                     <div class="modal-body">
                         <!--<div class="form-group">-->
                             <!--<label>ID</label>-->
