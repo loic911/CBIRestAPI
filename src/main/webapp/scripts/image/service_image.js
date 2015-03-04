@@ -6,3 +6,10 @@ retrievalApp.factory('Image', function ($resource) {
             'get': { method: 'GET'}
         });
     });
+
+retrievalApp.factory('ImageByStorage', function ($resource) {
+    return $resource('api/storages/:storage/images', {}, {
+        'query': { method: 'GET', isArray: true},
+        'get': { method: 'GET'}
+    });
+});

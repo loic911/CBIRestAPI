@@ -23,7 +23,7 @@ retrievalApp.controller('StorageController', function ($scope, resolvedStorage, 
                     $scope.storage.error = e.data.message;
                 });
         };
-    
+
 
         //$scope.update = function (id) {
         //    $scope.storage = Storage.get({id: id});
