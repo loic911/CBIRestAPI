@@ -30,11 +30,16 @@ retrievalApp.controller('StorageController', function ($scope, resolvedStorage, 
         //};
 
         $scope.delete = function (id) {
-            Storage.delete({id: id},
-                function () {
-                    $scope.cleanError();
-                    $scope.storages = Storage.query();
-                });
+            bootbox.confirm("Are you sure?", function(result) {
+                if(result) {
+                    Storage.delete({id: id},
+                        function () {
+                            $scope.cleanError();
+                            $scope.storages = Storage.query();
+                        });
+                }
+
+            });
         };
 
         $scope.clear = function () {
