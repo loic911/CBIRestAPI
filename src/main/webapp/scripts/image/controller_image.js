@@ -18,7 +18,7 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
 
         $scope.storageChanged = function(selected) {
             console.log(selected);
-            if(selected!="ALL STORAGES")
+            if(selected!="*** STORAGES ***")
                 $location.url("/storage/"+selected+"/image");
             else
                 $location.url("/image");
@@ -26,13 +26,14 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
 
         $scope.storages = Storage.query(
             function(storage) {
-                $scope.storages.unshift({id:"ALL STORAGES"});
+                $scope.storages.unshift({id:"*** STORAGES ***"});
                 console.log(storage);
-                $scope.selectedStorage = {selected: ($routeParams["storage"]?$routeParams["storage"]:"ALL STORAGES")};
+                $scope.selectedStorage = {selected: ($routeParams["storage"]?$routeParams["storage"]:"*** STORAGES ***")};
             }
         );
 
-        $scope.selectedStorage = $routeParams["storage"];
+        $scope.selectedStorage = {selected: ($routeParams["storage"]?$routeParams["storage"]:"*** STORAGES ***")};
+        $scope.selectedStorageCreate = $scope.selectedStorage;
 
         $scope.delete = function (image) {
 
@@ -67,15 +68,39 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
 
         $scope.create = function() {
             var $files = $scope.filesToUpload;
+            console.log($scope.id);
+            if(!$files) {
+                $scope.cleanError();
+                $scope.image.error.create = "No file selected";
+            }
+
+            var url = '/api/images?';
+            if($scope.id) {
+                url = url + "&id="+$scope.id
+            }
+            if($scope.keys) {
+                url = url + "&keys="+$scope.keys
+            }
+            if($scope.values) {
+                url = url + "&values="+$scope.values
+            }
+            if($scope.async) {
+                url = url + "&async="+$scope.async
+            }
+            console.log($scope.selectedStorageCreate );
+            if($scope.selectedStorageCreate && $scope.selectedStorageCreate.selected!="*** STORAGES ***") {
+                url = url + "&storage="+$scope.selectedStorageCreate.selected
+            }
+
             //$files: an array of files selected, each file has name, size, and type.
             for (var i = 0; i < $files.length; i++) {
                 var file = $files[i];
                 $scope.upload = $upload.upload({
-                    url: '/api/images', //upload.php script, node.js route, or servlet url
+                    url: url, //upload.php script, node.js route, or servlet url
                     //method: 'POST' or 'PUT',
                     //headers: {'header-key': 'header-value'},
                     //withCredentials: true,
-                    data: {myObj: $scope.myModelObj},
+                    data: {},
                     file: file, // or list of files ($files) for html5 only
                     //fileName: 'doc.jpg' or ['1.jpg', '2.jpg', ...] // to modify the name of the file(s)
                     // customize file formData name ('Content-Desposition'), server side file variable name.
@@ -87,6 +112,17 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
                 }).success(function(data, status, headers, config) {
                     // file is uploaded successfully
                     console.log(data);
+                    $scope.cleanError();
+                    $('#saveImageModal').modal('hide');
+                    //$scope.storageChanged($scope.selectedStorageCreate.selected);
+                    $scope.list($routeParams["storage"]);
+
+
+                }).error(function(data, status, headers, config) {
+                    // file is uploaded successfully
+                    console.log(data);
+                    $scope.cleanError();
+                    $scope.image.error.create = data.message;
                 });
                 //.error(...)
                 //.then(success, error, progress);
