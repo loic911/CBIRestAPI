@@ -61,12 +61,21 @@ retrievalApp.controller('ImageController', function ($location,$scope,$routePara
         //    $('#saveImageModal').modal('show');
         //};
 
-        $scope.delete = function (id) {
-            Image.delete({id: id},
-                function () {
-                    $scope.cleanError();
-                    $scope.images = Image.query();
-                });
+        $scope.delete = function (image) {
+
+            bootbox.confirm("Are you sure?", function(result) {
+                if(result) {
+                    ImageByStorage.delete({id: image.id,storage:image.storage},
+                        function () {
+                            $scope.cleanError();
+                            $scope.list($routeParams["storage"]);
+                            //$scope.images = Image.query();
+                        });
+                }
+
+            });
+
+
         };
 
         $scope.clear = function () {
