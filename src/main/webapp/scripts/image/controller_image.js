@@ -1,6 +1,6 @@
 'use strict';
 
-retrievalApp.controller('ImageController', function ($location,$scope,$routeParams, Image,ImageByStorage, Storage) {
+retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$routeParams, Image,ImageByStorage, Storage) {
 
         $scope.cleanError = function() {
             $scope.image = {error : {create:null,delete:null}};
@@ -34,33 +34,6 @@ retrievalApp.controller('ImageController', function ($location,$scope,$routePara
 
         $scope.selectedStorage = $routeParams["storage"];
 
-        //$scope.$watch("selectedStorage", function() {
-        //
-        //    if($scope.selectedStorage!=null) {
-        //        $location.('storage', $scope.selectedStorage.id);
-        //    }
-        //});
-
-
-        $scope.create = function () {
-            Image.save($scope.image,
-                function () {
-                    $scope.cleanError();
-                    $scope.list($routeParams["storage"]);
-                    $('#saveImageModal').modal('hide');
-                    $scope.clear();
-                },
-                function (e) {
-                    console.log(e);
-                    $scope.image.error = e.data.message;
-                });
-        };
-
-        //$scope.update = function (id) {
-        //    $scope.image = Image.get({id: id});
-        //    $('#saveImageModal').modal('show');
-        //};
-
         $scope.delete = function (image) {
 
             bootbox.confirm("Are you sure?", function(result) {
@@ -92,5 +65,45 @@ retrievalApp.controller('ImageController', function ($location,$scope,$routePara
             });
         };
 
+        $scope.create = function() {
+            var $files = $scope.filesToUpload;
+            //$files: an array of files selected, each file has name, size, and type.
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/images', //upload.php script, node.js route, or servlet url
+                    //method: 'POST' or 'PUT',
+                    //headers: {'header-key': 'header-value'},
+                    //withCredentials: true,
+                    data: {myObj: $scope.myModelObj},
+                    file: file, // or list of files ($files) for html5 only
+                    //fileName: 'doc.jpg' or ['1.jpg', '2.jpg', ...] // to modify the name of the file(s)
+                    // customize file formData name ('Content-Desposition'), server side file variable name.
+                    //fileFormDataName: myFile, //or a list of names for multiple files (html5). Default is 'file'
+                    // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
+                    //formDataAppender: function(formData, key, val){}
+                }).progress(function(evt) {
+                    console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+                }).success(function(data, status, headers, config) {
+                    // file is uploaded successfully
+                    console.log(data);
+                });
+                //.error(...)
+                //.then(success, error, progress);
+                // access or attach event listeners to the underlying XMLHttpRequest.
+                //.xhr(function(xhr){xhr.upload.addEventListener(...)})
+            }
+        };
 
-    });
+        $scope.onFileSelect = function($files) {
+            $scope.filesToUpload = $files;
+        };
+});
+
+//inject angular file upload directives and service.
+//angular.module('myApp', ['angularFileUpload']);
+
+var UploadController = [ '$scope', '$upload', function($scope, $upload) {
+
+
+}];

@@ -147,7 +147,8 @@ public class ImageResource {
     @RequestParam(required = false) String keys,
     @RequestParam(required = false) String values,
     @RequestParam(defaultValue = "false") Boolean async,//http://stackoverflow.com/questions/17693435/how-to-give-default-date-values-in-requestparam-in-spring
-    MultipartHttpServletRequest request
+    //MultipartHttpServletRequest request
+    @RequestParam("file") MultipartFile file
     ) throws CBIRException
     {
         log.debug("REST request to create image : {}", idImage);
@@ -162,16 +163,18 @@ public class ImageResource {
 
         BufferedImage image;
         try {
-            System.out.println(request);
-            System.out.println(request.getMultipartHeaders("file"));
-
-            byte[] data = new byte[]{};
-            Map<String, MultipartFile> files = request.getFileMap();
-            for (MultipartFile file : files.values()) {
-                data = file.getBytes();
-            }
-
-            //image = ImageIO.read(new ByteArrayInputStream(imageBytes.getBytes()));
+//            if(request.getFileNames().hasNext())
+//                System.out.println(request.getFileNames().next());
+//
+//            System.out.println("multipart.file="+request.getMultipartHeaders("file"));
+//
+//            byte[] data = new byte[]{};
+//            Map<String, MultipartFile> files = request.getFileMap();
+//            for (MultipartFile file : files.values()) {
+//                data = file.getBytes();
+//            }
+            System.out.println(file.getOriginalFilename());
+            byte[] data = file.getBytes();
             image = ImageIO.read(new ByteArrayInputStream(data));
         } catch(IOException ex) {
             throw new ResourceNotValidException("Image not valid:"+ex.toString());

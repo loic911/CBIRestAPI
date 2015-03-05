@@ -17,6 +17,22 @@
     </div>
 
 
+    <!--<div ng-controller="ImageController">-->
+        <!--<input type="text" ng-model="myModelObj">-->
+        <!--<input type="file" ng-file-select="onFileSelect($files)">-->
+        <!--<input type="file" ng-file-select="onFileSelect($files)" multiple accept="image/*">-->
+        <!--<div class="button" ng-file-select="onFileSelect($files)" data-multiple="true"></div>-->
+        <!--<div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class-name-or-function"-->
+             <!--ng-show="dropSupported">drop files here</div>-->
+        <!--<div ng-file-drop-available="dropSupported=true"-->
+             <!--ng-show="!dropSupported">HTML5 Drop File is not supported!</div>-->
+        <!--<button ng-click="upload.abort()">Cancel Upload</button>-->
+        <!--<button ng-click="onClick()">OK</button>-->
+    <!--</div>-->
+
+
+
+
     <h2>Images</h2>
 
     <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#saveImageModal" ng-click="clear()">
@@ -29,24 +45,75 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <form name="form" role="form" novalidate
-                      class="ng-scope ng-invalid ng-invalid-required ng-dirty ng-valid-minlength"
-                      ng-submit="create()">
+                      class="ng-scope ng-invalid ng-invalid-required ng-dirty ng-valid-minlength form-horizontal"
+                      enctype="multipart/form-data"
+                      submit="create()"
+                      ng-controller="ImageController"
+                    >
+
+
 
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                                 ng-click="clear()">&times;</button>
-                        <h4 class="modal-title" id="myImageLabel">Create or edit a Image</h4>
+                        <h4 class="modal-title" id="myImageLabel">Add a new Image</h4>
                     </div>
 
 
 
+
                     <div class="modal-body">
+                        <!--<form class="form-horizontal" method="POST" enctype="multipart/form-data" action="/api/images">-->
+
+                        <!--<div ng-controller="ImageController">-->
+                            <!--<input type="text" ng-model="myModelObj">-->
+                            <!--<input type="file" ng-file-select="onFileSelect($files)">-->
+                            <!--<input type="file" ng-file-select="onFileSelect($files)" multiple accept="image/*">-->
+                            <!--<div class="button" ng-file-select="onFileSelect($files)" data-multiple="true"></div>-->
+                            <!--<div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class-name-or-function"-->
+                                 <!--ng-show="dropSupported">drop files here</div>-->
+                            <!--<div ng-file-drop-available="dropSupported=true"-->
+                                 <!--ng-show="!dropSupported">HTML5 Drop File is not supported!</div>-->
+                            <!--<button ng-click="upload.abort()">Cancel Upload</button>-->
+                            <!--<button ng-click="onClick()">OK</button>-->
+                        <!--</div>-->
+
+
+
+
 
                         <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" class="form-control"
-                                   ng-model="image.id">
-                        </div>
+                                <label for="inputFile" class="col-sm-2 control-label" >File</label>
+                                <div class="col-sm-10">
+                                    <input ng-file-select="onFileSelect($files)" class="btn btn-default" type="file" name="file" id="inputFile">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputId" class="col-sm-2 control-label">Id</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="id" type="number" name="id" id="inputId" placeholder="Optional: number">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="keys" class="col-sm-2 control-label" >Keys</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="keys" type="text" name="keys" id="keys" placeholder="Optional: k1;k2;...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="values" class="col-sm-2 control-label" >Values</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="values" type="text" name="values" id="values" placeholder="Optional: v1;v2;...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="values" class="col-sm-2 control-label">Asynchrone</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="async" type="checkbox" name="async" id="async">
+                                </div>
+                            </div>
+
+                        <!--</form>-->
 
                         <div class="alert alert-danger" ng-show="image.error">
                             {{image.error}}
@@ -58,9 +125,13 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
                             <span class="glyphicon glyphicon-ban-circle"></span> Cancel
                         </button>
-                        <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">
-                            <span class="glyphicon glyphicon-save"></span> Save
-                        </button>
+
+                        <input class="btn btn-primary" ng-click="create()" type="submit" value="Save">
+
+                        <!--<button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">-->
+                            <!--<span class="glyphicon glyphicon-save"></span> Save-->
+
+                        <!--</button>-->
                     </div>
                 </form>
             </div>

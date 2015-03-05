@@ -3,7 +3,7 @@
 /* App Module */
 
 var retrievalApp = angular.module('retrievalApp', ['http-auth-interceptor', 'tmh.dynamicLocale',
-    'ngResource', 'ngRoute', 'ngCookies', 'retrievalAppUtils', 'pascalprecht.translate', 'truncate', 'ngCacheBuster']);
+    'ngResource', 'ngRoute', 'ngCookies', 'retrievalAppUtils', 'pascalprecht.translate', 'truncate', 'ngCacheBuster','angularFileUpload']);
 
 retrievalApp
     .config(function ($routeProvider, $httpProvider, $translateProvider, tmhDynamicLocaleProvider, httpRequestInterceptorCacheBusterProvider, USER_ROLES) {

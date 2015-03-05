@@ -46,12 +46,12 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
 //        factory.setMaxRequestSize("128KB");
 //        return factory.createMultipartConfig();
 //    }
-    @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver c = new CommonsMultipartResolver();
-        c.setMaxUploadSize(100000);
-        return c;
-    }
+//    @Bean
+//    public CommonsMultipartResolver multipartResolver() {
+//        CommonsMultipartResolver c = new CommonsMultipartResolver();
+//        c.setMaxUploadSize(100000000);
+//        return c;
+//    }
 
 
     /**

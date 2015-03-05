@@ -188,17 +188,24 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         h2ConsoleServlet.setLoadOnStartup(1);
     }
 
-    @Bean(name = "multipartResolver")
-    public CommonsMultipartResolver commonsMultipartResolver(){
-        CommonsMultipartResolver c = new CommonsMultipartResolver();
-        c.setMaxUploadSize(100000);
-        return c;
-    }
+//    @Bean(name = "multipartResolver")
+//    public CommonsMultipartResolver commonsMultipartResolver(){
+//        CommonsMultipartResolver c = new CommonsMultipartResolver();
+//        c.setMaxUploadSize(100000000);
+//        return c;
+//    }
+//
+//    @Bean
+//    public CommonsMultipartResolver multipartResolver(){
+//        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+//        resolver.setMaxUploadSize(100000000);
+//        return resolver;
+//    }
 
-    @Bean
-    public CommonsMultipartResolver multipartResolver(){
-        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(5242880);
-        return resolver;
-    }
+//    @Bean(name = "multipartResolver")
+//    public CommonsMultipartResolver multipartResolver(){
+//        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+//        resolver.setMaxUploadSize(100000000);
+//        return resolver;
+//    }
 }
