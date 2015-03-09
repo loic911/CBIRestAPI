@@ -191,8 +191,8 @@ public class ImageResourceTest {
         MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
-                .file(file1)
-                .param("id", id+"")
+                .file(firstFile)
+                .param("id", id + "")
                 .param("storage", storage)
                 .param("keys", "date;test")
                 .param("values", "2015;test")
@@ -221,7 +221,7 @@ public class ImageResourceTest {
         MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
-                .file(file1)
+                .file(firstFile)
                 .param("id", id + "")
                 .param("storage", storage)
                 .param("async", "false")
@@ -251,7 +251,7 @@ public class ImageResourceTest {
         MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
-                .file(file1)
+                .file(firstFile)
                 .param("id", id + "")
                 .param("storage", storage)
                 .param("async", "false")
@@ -280,7 +280,7 @@ public class ImageResourceTest {
         MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
-                .file(file1)
+                .file(firstFile)
                 .param("id", id + "")
                 .param("async", "false")
         )
@@ -312,7 +312,7 @@ public class ImageResourceTest {
         MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(8)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
-                .file(file1)
+                .file(firstFile)
                     //.param("id", id + "")
                 .param("storage", storage)
         )
