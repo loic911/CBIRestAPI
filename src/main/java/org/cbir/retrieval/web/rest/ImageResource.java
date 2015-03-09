@@ -163,16 +163,6 @@ public class ImageResource {
 
         BufferedImage image;
         try {
-//            if(request.getFileNames().hasNext())
-//                System.out.println(request.getFileNames().next());
-//
-//            System.out.println("multipart.file="+request.getMultipartHeaders("file"));
-//
-//            byte[] data = new byte[]{};
-//            Map<String, MultipartFile> files = request.getFileMap();
-//            for (MultipartFile file : files.values()) {
-//                data = file.getBytes();
-//            }
             System.out.println(file.getOriginalFilename());
             byte[] data = file.getBytes();
             image = ImageIO.read(new ByteArrayInputStream(data));

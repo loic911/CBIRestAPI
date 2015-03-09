@@ -109,16 +109,16 @@ public class StorageResourceTest {
         restStorageMockMvc.perform(get("/api/storages").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$[0].id").value(RetrievalService.DEFAULT_STORAGE));
+            .andExpect(jsonPath("$[0].id").value(RetrievalService.DEFAULT_TEST_STORAGE));
     }
 
 
     @Test
     public void testGetStorage() throws Exception {
-        restStorageMockMvc.perform(get("/api/storages/{id}",RetrievalService.DEFAULT_STORAGE).accept(MediaType.APPLICATION_JSON))
+        restStorageMockMvc.perform(get("/api/storages/{id}",RetrievalService.DEFAULT_TEST_STORAGE).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(RetrievalService.DEFAULT_STORAGE));
+            .andExpect(jsonPath("$.id").value(RetrievalService.DEFAULT_TEST_STORAGE));
     }
 
     @Test

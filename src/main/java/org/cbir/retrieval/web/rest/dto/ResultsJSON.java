@@ -42,7 +42,7 @@ public class ResultsJSON {
             ).collect( Collectors.toList() );
     }
 
-    private Map<String,Object> createResult(ResultSim rs) {
+    public Map<String,Object> createResult(ResultSim rs) {
         Map<String,Object> result = new TreeMap<>();
         result.put("id",rs.getId()+"");
         result.put("properties",rs.getProperties());

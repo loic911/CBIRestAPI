@@ -25,7 +25,8 @@ import java.util.*;
 @Transactional
 public class RetrievalService {
 
-    public static String DEFAULT_STORAGE = "default";
+    public static String DEFAULT_TEST_STORAGE = "default";
+    public static String DEFAULT_STORAGE = "dev";
     public static String OTHER_STORAGE = "abc";
 
     private final Logger log = LoggerFactory.getLogger(RetrievalService.class);
@@ -39,17 +40,18 @@ public class RetrievalService {
     public void initRetrievalServer() throws Exception{
         log.info("Init retrieval server");
         RetrievalServer server = null;
-        String envir = env.getActiveProfiles()[0];
-        log.info("profile is "+ Arrays.toString(env.getActiveProfiles()) +" => " +envir);
-        if (envir.equals("test")) {
-            server = buildRetrievalServerForTest();
-        }
-        if (envir.equals("dev")) {
-            server = buildRetrievalServerForDev();
-        }
-        if (envir.equals("prod")) {
-            server = buildRetrievalServerForDev();
-        }
+        String envir = "";
+        if(env.getActiveProfiles().length>0) {
+            log.info("profile is "+ Arrays.toString(env.getActiveProfiles()) +" => " +envir);
+            if (envir.equals("dev")) {
+                server = buildRetrievalServerForDev();
+            } else if (envir.equals("prod")) {
+                server = buildRetrievalServerForDev();
+            } else {
+                server = buildRetrievalServerForTest();
+            }
+        } else server = buildRetrievalServerForTest();
+
 
         servletContext.setAttribute("server",server);
         servletContext.setAttribute("client",buildRetrievalClient(server));
@@ -59,13 +61,16 @@ public class RetrievalService {
         return (RetrievalServer)servletContext.getAttribute("server");
     }
 
+    public RetrievalClient getRetrievalClient() {
+        return (RetrievalClient)servletContext.getAttribute("client");
+    }
 
 
     public RetrievalServer buildRetrievalServerForTest() throws Exception {
         ConfigServer configServer = new ConfigServer("config/ConfigServer.prop");
         configServer.setStoreName("MEMORY");
         RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
-        server.createStorage(DEFAULT_STORAGE);
+        server.createStorage(DEFAULT_TEST_STORAGE);
         return server;
     }
 
@@ -73,15 +78,15 @@ public class RetrievalService {
         ConfigServer configServer = new ConfigServer("config/ConfigServer.prop");
         configServer.setStoreName("MEMORY");
         RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
-        server.createStorage(DEFAULT_STORAGE);
+        server.createStorage(DEFAULT_TEST_STORAGE);
         server.createStorage(OTHER_STORAGE);
 
         Map<String,String> properties = new TreeMap<>();
         properties.put("date",new Date().toString());
 
-        server.getStorage(DEFAULT_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop1.jpg")), 1l, new HashMap<>(properties));//should be fix in the retrieval lib?
-        server.getStorage(DEFAULT_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop2.jpg")), 2l, new HashMap<>(properties));
-        server.getStorage(DEFAULT_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop3.jpg")), 3l, new HashMap<>(properties));
+        server.getStorage(DEFAULT_TEST_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop1.jpg")), 1l, new HashMap<>(properties));//should be fix in the retrieval lib?
+        server.getStorage(DEFAULT_TEST_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop2.jpg")), 2l, new HashMap<>(properties));
+        server.getStorage(DEFAULT_TEST_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop3.jpg")), 3l, new HashMap<>(properties));
         server.getStorage(OTHER_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop4.jpg")), 4l, new HashMap<>(properties));
 
         return server;
