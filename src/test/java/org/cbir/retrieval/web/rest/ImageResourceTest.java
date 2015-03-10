@@ -374,10 +374,16 @@ public class ImageResourceTest {
     }
 
 
-    private Map<String, Object> parseStringToMap(MvcResult result) throws java.io.IOException {
+    public static Map<String, Object> parseStringToMap(MvcResult result) throws java.io.IOException {
         String response = result.getResponse().getContentAsString();
+        System.out.println("response="+response);
         ObjectReader reader = new ObjectMapper().reader(Map.class);
         return reader.readValue(response);
     }
-
+    public static List<Map> parseStringToList(MvcResult result) throws java.io.IOException {
+        String response = result.getResponse().getContentAsString();
+        System.out.println("response="+response);
+        ObjectReader reader = new ObjectMapper().reader(List.class);
+        return reader.readValue(response);
+    }
 }

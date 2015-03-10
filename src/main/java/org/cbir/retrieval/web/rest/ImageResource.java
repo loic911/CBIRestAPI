@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import org.cbir.retrieval.security.AuthoritiesConstants;
 import org.cbir.retrieval.service.RetrievalService;
 import org.cbir.retrieval.service.exception.*;
+import org.cbir.retrieval.web.rest.dto.ResultsJSON;
 import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import retrieval.client.RetrievalClient;
+import retrieval.dist.ResultsSimilarities;
 import retrieval.server.RetrievalServer;
 import retrieval.storage.Storage;
 import retrieval.storage.exception.AlreadyIndexedException;
@@ -228,5 +231,44 @@ public class ImageResource {
             log.error(e.getMessage());
             throw new CBIRException("Cannot delete image:"+e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+
+
+    @RequestMapping(value = "/search",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    ResponseEntity<List<Map<String,Object>>> search(
+        @RequestParam(defaultValue = "30") Integer max,
+        @RequestParam(defaultValue = "") String storages,
+        @RequestParam("file") MultipartFile file
+    ) throws CBIRException {
+        log.debug("REST request to get CBIR results : max="+max + " storages=" + storages);
+
+        String[] storagesArray = new String[0];
+        if(!storages.isEmpty()) {
+            storagesArray = storages.split(";");
+        }
+
+        BufferedImage image;
+        try {
+            System.out.println(file.getOriginalFilename());
+            byte[] data = file.getBytes();
+            image = ImageIO.read(new ByteArrayInputStream(data));
+        } catch(IOException ex) {
+            throw new ResourceNotValidException("Image not valid:"+ex.toString());
+        }
+
+        RetrievalClient retrievalClient = retrievalService.getRetrievalClient();
+        ResultsSimilarities rs = null;
+        try {
+            rs = retrievalClient.search(image,max,storagesArray);
+        } catch (retrieval.exception.CBIRException e) {
+            throw new ResourceNotValidException("Cannot process CBIR request:"+e);
+        }
+
+        return new ResponseEntity<>(new ResultsJSON(rs).getData(),HttpStatus.OK);
     }
 }
