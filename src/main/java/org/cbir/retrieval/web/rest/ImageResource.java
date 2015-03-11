@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -233,9 +234,6 @@ public class ImageResource {
         }
     }
 
-
-
-
     @RequestMapping(value = "/search",
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
@@ -246,19 +244,46 @@ public class ImageResource {
         @RequestParam("file") MultipartFile file
     ) throws CBIRException {
         log.debug("REST request to get CBIR results : max="+max + " storages=" + storages);
-
-        String[] storagesArray = new String[0];
-        if(!storages.isEmpty()) {
-            storagesArray = storages.split(";");
-        }
-
-        BufferedImage image;
+        BufferedImage image=null;
         try {
             System.out.println(file.getOriginalFilename());
             byte[] data = file.getBytes();
             image = ImageIO.read(new ByteArrayInputStream(data));
         } catch(IOException ex) {
             throw new ResourceNotValidException("Image not valid:"+ex.toString());
+        }
+        return doSearchSim(max, storages,image);
+    }
+
+
+
+
+    @RequestMapping(value = "/searchUrl",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    ResponseEntity<List<Map<String,Object>>> search(
+        @RequestParam(defaultValue = "30") Integer max,
+        @RequestParam(defaultValue = "") String storages,
+        @RequestParam() String url
+    ) throws CBIRException {
+        log.debug("REST request to get CBIR results : max="+max + " storages=" + storages);
+        BufferedImage image=null;
+        try {
+            image = ImageIO.read(new URL(url));
+        } catch(IOException ex) {
+            throw new ResourceNotValidException("Image not valid:"+ex.toString());
+        }
+        return doSearchSim(max, storages,image);
+    }
+
+
+
+
+    private ResponseEntity<List<Map<String, Object>>> doSearchSim(Integer max, String storages, BufferedImage image) throws ResourceNotValidException {
+        String[] storagesArray = new String[0];
+        if(!storages.isEmpty()) {
+            storagesArray = storages.split(";");
         }
 
         RetrievalClient retrievalClient = retrievalService.getRetrievalClient();
