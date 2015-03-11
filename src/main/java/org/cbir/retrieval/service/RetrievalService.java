@@ -11,11 +11,17 @@ import retrieval.client.RetrievalClient;
 import retrieval.config.ConfigClient;
 import retrieval.config.ConfigServer;
 import retrieval.server.RetrievalServer;
+import retrieval.storage.Storage;
+import retrieval.storage.exception.AlreadyIndexedException;
+import retrieval.storage.exception.NoValidPictureException;
+import retrieval.storage.exception.PictureTooHomogeneous;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -33,6 +39,9 @@ public class RetrievalService {
 
     @Inject
     private Environment env;
+
+    @Inject
+    private StoreImageService storeImageService;
 
     @Autowired
     ServletContext servletContext;
@@ -85,13 +94,20 @@ public class RetrievalService {
         Map<String,String> properties = new TreeMap<>();
         properties.put("date",new Date().toString());
 
-        server.getStorage(DEFAULT_TEST_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop1.jpg")), 1l, new HashMap<>(properties));//should be fix in the retrieval lib?
-        server.getStorage(DEFAULT_TEST_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop2.jpg")), 2l, new HashMap<>(properties));
-        server.getStorage(DEFAULT_TEST_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop3.jpg")), 3l, new HashMap<>(properties));
-        server.getStorage(OTHER_STORAGE).indexPicture(ImageIO.read(new File("testdata/images/crop4.jpg")), 4l, new HashMap<>(properties));
+        indexPicture(server.getStorage(DEFAULT_TEST_STORAGE),ImageIO.read(new File("testdata/images/crop1.jpg")),1l, new HashMap<>(properties));
+        indexPicture(server.getStorage(DEFAULT_TEST_STORAGE),ImageIO.read(new File("testdata/images/crop2.jpg")),2l, new HashMap<>(properties));
+        indexPicture(server.getStorage(DEFAULT_TEST_STORAGE),ImageIO.read(new File("testdata/images/crop3.jpg")),3l, new HashMap<>(properties));
+        indexPicture(server.getStorage(OTHER_STORAGE),ImageIO.read(new File("testdata/images/crop4.jpg")),4l, new HashMap<>(properties));
 
         return server;
     }
+
+    private void indexPicture(Storage storage,BufferedImage image,Long id, Map<String,String> properties) throws NoValidPictureException, AlreadyIndexedException, PictureTooHomogeneous, IOException {
+        Long realId = storage.indexPicture(image,id,properties);
+        storeImageService.saveIndexImage(realId,image);
+
+    }
+
 
     public RetrievalClient buildRetrievalClient(RetrievalServer server) throws Exception {
         return new RetrievalClient(new ConfigClient("config/ConfigClient.prop"),server);

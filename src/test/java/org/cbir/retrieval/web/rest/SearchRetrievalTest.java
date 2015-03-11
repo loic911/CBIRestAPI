@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.cbir.retrieval.Application;
 import org.cbir.retrieval.service.RetrievalService;
+import org.cbir.retrieval.service.StoreImageService;
 import org.cbir.retrieval.service.exception.ResourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +67,9 @@ public class SearchRetrievalTest {
     @Inject
     private RetrievalService retrievalService;
 
+    @Inject
+    private StoreImageService storeImageService;
+
     private RetrievalServer retrievalServer;
 
     private MockMvc restStorageMockMvc;
@@ -75,6 +79,7 @@ public class SearchRetrievalTest {
     public void setup() throws Exception {
         ImageResource imageResource = new ImageResource();
         ReflectionTestUtils.setField(imageResource, "retrievalService", retrievalService);
+        ReflectionTestUtils.setField(imageResource, "storeImageService", storeImageService);
         this.restStorageMockMvc = MockMvcBuilders.standaloneSetup(imageResource).build();
 
         retrievalService.reset();
@@ -113,8 +118,9 @@ public class SearchRetrievalTest {
 
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
 
-        List<Map> results = ImageResourceTest.parseStringToList(result);
-        assertThat(results.isEmpty()).isFalse();
+        Map results = ImageResourceTest.parseStringToMap(result);
+        assertThat(results.get("id")).isNotNull();
+        assertThat(((List)results.get("data")).isEmpty()).isFalse();
     }
 
     @Test
@@ -136,8 +142,9 @@ public class SearchRetrievalTest {
 
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
 
-        List<Map> results = ImageResourceTest.parseStringToList(result);
-        assertThat(results.size()).isEqualTo(1);
+        Map results = ImageResourceTest.parseStringToMap(result);
+        assertThat(results.get("id")).isNotNull();
+        assertThat(((List)results.get("data")).size()).isEqualTo(1);
     }
 
     @Test
@@ -161,8 +168,9 @@ public class SearchRetrievalTest {
 
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
 
-        List<Map> results = ImageResourceTest.parseStringToList(result);
-        assertThat(results.size()).isEqualTo(1);
+        Map results = ImageResourceTest.parseStringToMap(result);
+        assertThat(results.get("id")).isNotNull();
+        assertThat(((List)results.get("data")).size()).isEqualTo(1);
     }
 
     @Test
@@ -176,14 +184,14 @@ public class SearchRetrievalTest {
 
         MvcResult result = restStorageMockMvc.perform(
             post("/api/searchUrl")
-                .param("fileUrl", "https://www.google.be/images/srpr/logo11w.png")
+                .param("url", "https://www.google.be/images/srpr/logo11w.png")
         )
             .andReturn();
 
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
 
-        List<Map> results = ImageResourceTest.parseStringToList(result);
-        assertThat(results.size()).isEqualTo(1);
+        Map results = ImageResourceTest.parseStringToMap(result);
+        assertThat(results.get("id")).isNotNull();
     }
 
     @Test

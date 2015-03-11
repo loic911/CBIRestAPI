@@ -15,7 +15,10 @@ public class ResultsJSON {
 
     ResultsSimilarities resultsSimilarities;
 
-    public ResultsJSON(ResultsSimilarities resultsSimilarities) {
+    Long id;
+
+    public ResultsJSON(Long id,ResultsSimilarities resultsSimilarities) {
+        this.id = id;
         this.resultsSimilarities = resultsSimilarities;
     }
 
@@ -34,6 +37,10 @@ public class ResultsJSON {
 //            .collect( Collectors.toList() ) ;
 //    }
 
+    public Long getId() {
+        return id;
+    }
+
     public List<Map<String,Object>> getData() {
         return resultsSimilarities
             .getResults()
@@ -42,7 +49,9 @@ public class ResultsJSON {
             ).collect( Collectors.toList() );
     }
 
-    public Map<String,Object> createResult(ResultSim rs) {
+
+
+    private Map<String,Object> createResult(ResultSim rs) {
         Map<String,Object> result = new TreeMap<>();
         result.put("id",rs.getId()+"");
         result.put("properties",rs.getProperties());

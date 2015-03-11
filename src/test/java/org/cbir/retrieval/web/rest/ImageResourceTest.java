@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.cbir.retrieval.Application;
 import org.cbir.retrieval.service.RetrievalService;
+import org.cbir.retrieval.service.StoreImageService;
 import org.cbir.retrieval.service.exception.ResourceAlreadyExistException;
 import org.cbir.retrieval.service.exception.ResourceNotFoundException;
 import org.json.JSONObject;
@@ -72,6 +73,9 @@ public class ImageResourceTest {
     @Inject
     private RetrievalService retrievalService;
 
+    @Inject
+    private StoreImageService storeImageService;
+
     private RetrievalServer retrievalServer;
 
     private MockMvc restStorageMockMvc;
@@ -81,6 +85,7 @@ public class ImageResourceTest {
     public void setup() throws Exception {
         ImageResource imageResource = new ImageResource();
         ReflectionTestUtils.setField(imageResource, "retrievalService", retrievalService);
+        ReflectionTestUtils.setField(imageResource, "storeImageService", storeImageService);
         this.restStorageMockMvc = MockMvcBuilders.standaloneSetup(imageResource).build();
 
         retrievalService.reset();

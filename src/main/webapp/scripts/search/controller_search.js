@@ -2,10 +2,13 @@
 
 retrievalApp.controller('SearchController',  function ($location,$scope,Storage,$http,$upload) {
 
+    //$scope.results = [{id:"1",properties:{date:"test"},similarities:"5545455"},{id:"3",properties:{date:"test"},similarities:"5545455"},{id:"4",properties:{date:"test"},similarities:"5545455"}];
+
     $scope.maxSearch = 30;
 
     $scope.cleanError = function() {
         $scope.search = {error: null};
+        $scope.results = null;
     };
     $scope.cleanError();
 
@@ -33,7 +36,7 @@ retrievalApp.controller('SearchController',  function ($location,$scope,Storage,
             storages = $scope.storagesSelected.join(";");
         }
 
-        if($scope.filesToSearch) {
+        if($scope.filesToSearch && $scope.filesToSearch.length>0) {
             $scope.searchMultipart($scope.filesToSearch,$scope.maxSearch,storages)
         } else if($scope.urlSearch) {
             $scope.searchUrl($scope.urlSearch,$scope.maxSearch,storages)
@@ -53,6 +56,7 @@ retrievalApp.controller('SearchController',  function ($location,$scope,Storage,
         ).success(function(data, status, headers, config) {
                 console.log(data);
                 $scope.cleanError();
+                $scope.results = data;
             }).
             error(function(data, status, headers, config) {
                 console.log(data);
@@ -86,6 +90,7 @@ retrievalApp.controller('SearchController',  function ($location,$scope,Storage,
                     // file is uploaded successfully
                     console.log(data);
                     $scope.cleanError();
+                    $scope.results = data;
                 }).error(function(data, status, headers, config) {
                     // file is uploaded successfully
                     console.log(data);
