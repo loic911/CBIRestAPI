@@ -42,6 +42,7 @@ public class RetrievalService {
         RetrievalServer server = null;
         String envir = "";
         if(env.getActiveProfiles().length>0) {
+            envir = env.getActiveProfiles()[0];
             log.info("profile is "+ Arrays.toString(env.getActiveProfiles()) +" => " +envir);
             if (envir.equals("dev")) {
                 server = buildRetrievalServerForDev();
