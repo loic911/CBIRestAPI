@@ -22,11 +22,11 @@
                 <br/>
                 <div ng-switch-when="true" class="container" ng-controller="SearchController">
                     <div class="container">
-                        <form class="form-horizontal">
+                        <form class="form-horizontal" ng-submit="search()">
                             <div class="form-group">
                                 <label for="inputUrlSearch" class="col-sm-2 control-label">Image URL</label>
                                 <div class="col-sm-8">
-                                    <input type="email" class="form-control" id="inputUrlSearch" placeholder="Copy image URL...">
+                                    <input ng-model="urlSearch"  type="url" class="form-control" id="inputUrlSearch" placeholder="Copy image URL...">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -61,6 +61,10 @@
                                 </div>
                             </div>
                         </form>
+                        <div class="alert alert-danger" ng-show="search.error">
+                            {{search.error}}
+                        </div>
+
                     </div>
 
                 </div>
