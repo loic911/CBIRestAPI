@@ -72,7 +72,7 @@ public class SearchRetrievalTest {
 
 
     @Before
-    public void setup() throws Exception{
+    public void setup() throws Exception {
         ImageResource imageResource = new ImageResource();
         ReflectionTestUtils.setField(imageResource, "retrievalService", retrievalService);
         this.restStorageMockMvc = MockMvcBuilders.standaloneSetup(imageResource).build();
@@ -80,17 +80,17 @@ public class SearchRetrievalTest {
         retrievalService.reset();
         this.retrievalServer = retrievalService.getRetrievalServer();
 
-        for(int i =1; i<5;i++) {
+        for (int i = 1; i < 5; i++) {
 
-            Long id = (long)i;
-            BufferedImage img = ImageIO.read(new File(IMAGE_PATHS[i-1]));
-            Map<String,String> properties = new TreeMap<>();
-            properties.put("path",IMAGE_PATHS[i-1]);
-            properties.put("date",new Date().toString());
+            Long id = (long) i;
+            BufferedImage img = ImageIO.read(new File(IMAGE_PATHS[i - 1]));
+            Map<String, String> properties = new TreeMap<>();
+            properties.put("path", IMAGE_PATHS[i - 1]);
+            properties.put("date", new Date().toString());
 
             retrievalServer
                 .getStorage(DEFAULT_STORAGE)
-                .indexPicture(img, id,properties);
+                .indexPicture(img, id, properties);
         }
 
     }
@@ -100,17 +100,14 @@ public class SearchRetrievalTest {
         // Validate the database is empty (only default storage)
         assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
 
-        String storage = DEFAULT_STORAGE;
         Long id = 5l;
 
-        File file = new File(IMAGE_PATHS[(int)(id-1)]);
+        File file = new File(IMAGE_PATHS[(int) (id - 1)]);
         MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[1])));
 
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/search")
                 .file(firstFile)
-                .param("max", "5")
-                .param("storages", "")
         )
             .andReturn();
 
@@ -118,6 +115,54 @@ public class SearchRetrievalTest {
 
         List<Map> results = ImageResourceTest.parseStringToList(result);
         assertThat(results.isEmpty()).isFalse();
+    }
+
+    @Test
+    public void testSearchImageMax() throws Exception {
+        // Validate the database is empty (only default storage)
+        assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
+
+        Long id = 5l;
+
+        File file = new File(IMAGE_PATHS[(int) (id - 1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[1])));
+
+        MvcResult result = restStorageMockMvc.perform(
+            fileUpload("/api/search")
+                .file(firstFile)
+                .param("max", "1")
+        )
+            .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+
+        List<Map> results = ImageResourceTest.parseStringToList(result);
+        assertThat(results.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void testSearchImageMaxWithSotrage() throws Exception {
+        // Validate the database is empty (only default storage)
+        assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
+
+        retrievalServer.createStorage("testSearchImageMax");
+        Long id = 5l;
+
+        File file = new File(IMAGE_PATHS[(int) (id - 1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[1])));
+
+        MvcResult result = restStorageMockMvc.perform(
+            fileUpload("/api/search")
+                .file(firstFile)
+                .param("max", "1")
+                .param("storages", DEFAULT_STORAGE + ";testSearchImageMax")
+        )
+            .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+
+        List<Map> results = ImageResourceTest.parseStringToList(result);
+        assertThat(results.size()).isEqualTo(1);
     }
 
 

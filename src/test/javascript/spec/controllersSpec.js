@@ -18,17 +18,17 @@ describe('Controllers Tests ', function () {
         });
     });
 
-    describe('PasswordController', function(){
-       var $scope,
-           PasswordService;
+    describe('PasswordController', function () {
+        var $scope,
+            PasswordService;
 
-        beforeEach(inject(function($rootScope, $controller, Password) {
+        beforeEach(inject(function ($rootScope, $controller, Password) {
             $scope = $rootScope.$new();
             PasswordService = Password;
-            $controller('PasswordController',{$scope:$scope, Password:PasswordService});
+            $controller('PasswordController', {$scope: $scope, Password: PasswordService});
         }));
 
-        it('should show error if passwords do not match', function(){
+        it('should show error if passwords do not match', function () {
             //GIVEN
             $scope.password = 'password1';
             $scope.confirmPassword = 'password2';
@@ -38,7 +38,7 @@ describe('Controllers Tests ', function () {
             expect($scope.doNotMatch).toBe('ERROR');
 
         });
-        it('should call Service and set OK on Success', function(){
+        it('should call Service and set OK on Success', function () {
             //GIVEN
             var pass = 'myPassword';
             $scope.password = pass;
@@ -66,7 +66,11 @@ describe('Controllers Tests ', function () {
             $scope = $rootScope.$new();
 
             AccountService = Account;
-            $controller('SettingsController',{$scope:$scope, resolvedAccount:AccountService, Account:AccountService});
+            $controller('SettingsController', {
+                $scope: $scope,
+                resolvedAccount: AccountService,
+                Account: AccountService
+            });
         }));
 
         it('should save account', function () {
@@ -81,7 +85,10 @@ describe('Controllers Tests ', function () {
 
             //THEN
             expect(AccountService.save).toHaveBeenCalled();
-                        expect(AccountService.save).toHaveBeenCalledWith({firstName: "John", lastName: "Doe"}, jasmine.any(Function), jasmine.any(Function));
+            expect(AccountService.save).toHaveBeenCalledWith({
+                firstName: "John",
+                lastName: "Doe"
+            }, jasmine.any(Function), jasmine.any(Function));
 
             //SIMULATE SUCCESS CALLBACK CALL FROM SERVICE
             AccountService.save.calls.mostRecent().args[1]();
@@ -97,7 +104,11 @@ describe('Controllers Tests ', function () {
             $scope = $rootScope.$new();
 
             SessionsService = Sessions;
-            $controller('SessionsController',{$scope:$scope, resolvedSessions:SessionsService, Sessions:SessionsService});
+            $controller('SessionsController', {
+                $scope: $scope,
+                resolvedSessions: SessionsService,
+                Sessions: SessionsService
+            });
         }));
 
         it('should invalidate session', function () {

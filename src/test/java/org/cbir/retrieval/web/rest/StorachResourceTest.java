@@ -37,10 +37,10 @@ public class StorachResourceTest {
 
     private static final String DEFAULT_NAME = "SAMPLE_TEXT";
     private static final String UPDATED_NAME = "UPDATED_TEXT";
-    
+
     private static final Long DEFAULT_SIZE = 0L;
     private static final Long UPDATED_SIZE = 1L;
-    
+
 
     @Inject
     private StorachRepository storachRepository;
@@ -72,9 +72,9 @@ public class StorachResourceTest {
 
         // Create the Storach
         restStorachMockMvc.perform(post("/app/rest/storachs")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(storach)))
-                .andExpect(status().isOk());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(storach)))
+            .andExpect(status().isOk());
 
         // Validate the Storach in the database
         List<Storach> storachs = storachRepository.findAll();
@@ -92,12 +92,12 @@ public class StorachResourceTest {
 
         // Get all the storachs
         restStorachMockMvc.perform(get("/app/rest/storachs"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[0].id").value(storach.getId().intValue()))
-                .andExpect(jsonPath("$.[0].name").value(DEFAULT_NAME.toString()))
-                .andExpect(jsonPath("$.[0].size").value(DEFAULT_SIZE.intValue()));
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[0].id").value(storach.getId().intValue()))
+            .andExpect(jsonPath("$.[0].name").value(DEFAULT_NAME.toString()))
+            .andExpect(jsonPath("$.[0].size").value(DEFAULT_SIZE.intValue()));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class StorachResourceTest {
     public void getNonExistingStorach() throws Exception {
         // Get the storach
         restStorachMockMvc.perform(get("/app/rest/storachs/{id}", 1L))
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -133,9 +133,9 @@ public class StorachResourceTest {
         storach.setName(UPDATED_NAME);
         storach.setSize(UPDATED_SIZE);
         restStorachMockMvc.perform(post("/app/rest/storachs")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(storach)))
-                .andExpect(status().isOk());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(storach)))
+            .andExpect(status().isOk());
 
         // Validate the Storach in the database
         List<Storach> storachs = storachRepository.findAll();
@@ -153,8 +153,8 @@ public class StorachResourceTest {
 
         // Get the storach
         restStorachMockMvc.perform(delete("/app/rest/storachs/{id}", storach.getId())
-                .accept(TestUtil.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
+            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk());
 
         // Validate the database is empty
         List<Storach> storachs = storachRepository.findAll();

@@ -78,7 +78,7 @@ public class ImageResourceTest {
 
 
     @Before
-    public void setup() throws Exception{
+    public void setup() throws Exception {
         ImageResource imageResource = new ImageResource();
         ReflectionTestUtils.setField(imageResource, "retrievalService", retrievalService);
         this.restStorageMockMvc = MockMvcBuilders.standaloneSetup(imageResource).build();
@@ -86,17 +86,17 @@ public class ImageResourceTest {
         retrievalService.reset();
         this.retrievalServer = retrievalService.getRetrievalServer();
 
-        for(int i =1; i<5;i++) {
+        for (int i = 1; i < 5; i++) {
 
-            Long id = (long)i;
-            BufferedImage img = ImageIO.read(new File(IMAGE_PATHS[i-1]));
-            Map<String,String> properties = new TreeMap<>();
-            properties.put("path",IMAGE_PATHS[i-1]);
-            properties.put("date",new Date().toString());
+            Long id = (long) i;
+            BufferedImage img = ImageIO.read(new File(IMAGE_PATHS[i - 1]));
+            Map<String, String> properties = new TreeMap<>();
+            properties.put("path", IMAGE_PATHS[i - 1]);
+            properties.put("date", new Date().toString());
 
             retrievalServer
                 .getStorage(DEFAULT_STORAGE)
-                .indexPicture(img, id,properties);
+                .indexPicture(img, id, properties);
         }
 
     }
@@ -104,7 +104,7 @@ public class ImageResourceTest {
     @Test
     public void testGetImage() throws Exception {
 
-        restStorageMockMvc.perform(get("/api/images/{id}",1L).accept(MediaType.APPLICATION_JSON))
+        restStorageMockMvc.perform(get("/api/images/{id}", 1L).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.id").value("1"));
@@ -114,9 +114,9 @@ public class ImageResourceTest {
     public void testGetImageNotExists() throws Exception {
 
         try {
-            restStorageMockMvc.perform(get("/api/images/{id}",0L).accept(MediaType.APPLICATION_JSON))
+            restStorageMockMvc.perform(get("/api/images/{id}", 0L).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-        } catch(NestedServletException e) {
+        } catch (NestedServletException e) {
             assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
         }
     }
@@ -124,7 +124,7 @@ public class ImageResourceTest {
     @Test
     public void testGetImageByStorage() throws Exception {
 
-        restStorageMockMvc.perform(get("/api/storages/{storage}/images/{id}",DEFAULT_STORAGE,1L)
+        restStorageMockMvc.perform(get("/api/storages/{storage}/images/{id}", DEFAULT_STORAGE, 1L)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -135,10 +135,10 @@ public class ImageResourceTest {
     public void testGetImageByStorageNotExists() throws Exception {
 
         try {
-            restStorageMockMvc.perform(get("/api/storages/{storage}/images/{id}","unknown",0L).accept(MediaType.APPLICATION_JSON))
+            restStorageMockMvc.perform(get("/api/storages/{storage}/images/{id}", "unknown", 0L).accept(MediaType.APPLICATION_JSON))
                 .andReturn();
             assert false;
-        } catch(NestedServletException e) {
+        } catch (NestedServletException e) {
             assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
         }
     }
@@ -156,7 +156,7 @@ public class ImageResourceTest {
 
     @Test
     public void testGetAllimagesByStorage() throws Exception {
-        restStorageMockMvc.perform(get("/api/storages/{storage}/images",DEFAULT_STORAGE).accept(MediaType.APPLICATION_JSON))
+        restStorageMockMvc.perform(get("/api/storages/{storage}/images", DEFAULT_STORAGE).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$[0].id").value("1"))
@@ -168,10 +168,10 @@ public class ImageResourceTest {
     @Test
     public void testGetAllimagesByStorageNotExist() throws Exception {
         try {
-            restStorageMockMvc.perform(get("/api/storages/{storage}/images","unknown").accept(MediaType.APPLICATION_JSON))
+            restStorageMockMvc.perform(get("/api/storages/{storage}/images", "unknown").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
             assert false;
-        } catch(NestedServletException e) {
+        } catch (NestedServletException e) {
             assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
         }
     }
@@ -185,10 +185,10 @@ public class ImageResourceTest {
         String storage = DEFAULT_STORAGE;
         Long id = 5l;
 
-        File file = new File(IMAGE_PATHS[(int)(id-1)]);
-        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        File file = new File(IMAGE_PATHS[(int) (id - 1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (id - 1)])));
 
-        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (id - 1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
                 .file(firstFile)
@@ -199,12 +199,12 @@ public class ImageResourceTest {
                 .param("async", "false")
         )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(id+""))
+            .andExpect(jsonPath("$.id").value(id + ""))
             .andExpect(jsonPath("$.test").value("test"))
             .andReturn();
 
         assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
-        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id", id + "");
     }
 
     @Test
@@ -215,10 +215,10 @@ public class ImageResourceTest {
         String storage = DEFAULT_STORAGE;
         Long id = 6l;
 
-        File file = new File(IMAGE_PATHS[(int)(id-1)]);
-        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        File file = new File(IMAGE_PATHS[(int) (id - 1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (id - 1)])));
 
-        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (id - 1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
                 .file(firstFile)
@@ -227,11 +227,11 @@ public class ImageResourceTest {
                 .param("async", "false")
         )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(id+""))
+            .andExpect(jsonPath("$.id").value(id + ""))
             .andReturn();
 
         assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
-        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id", id + "");
     }
 
 
@@ -245,10 +245,10 @@ public class ImageResourceTest {
 
         assertThat(retrievalServer.getStorage(storage)).isNull();
 
-        File file = new File(IMAGE_PATHS[(int)(id-1)]);
-        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        File file = new File(IMAGE_PATHS[(int) (id - 1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (id - 1)])));
 
-        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (id - 1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
                 .file(firstFile)
@@ -261,10 +261,10 @@ public class ImageResourceTest {
         printIfError(result);
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
         Map<String, Object> map = parseStringToMap(result);
-        assertThat(map.get("id")).isEqualTo(id+"");
+        assertThat(map.get("id")).isEqualTo(id + "");
         assertThat(retrievalServer.getStorage(storage)).isNotNull();
         assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
-        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id", id + "");
     }
 
     @Test
@@ -274,10 +274,10 @@ public class ImageResourceTest {
 
         Long id = 8l;
 
-        File file = new File(IMAGE_PATHS[(int)(id-1)]);
-        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        File file = new File(IMAGE_PATHS[(int) (id - 1)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (id - 1)])));
 
-        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(id-1)])));
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (id - 1)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
                 .file(firstFile)
@@ -289,14 +289,13 @@ public class ImageResourceTest {
         printIfError(result);
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
         Map<String, Object> map = parseStringToMap(result);
-        String storage = (String)map.get("storage");
+        String storage = (String) map.get("storage");
 
 
         assertThat(retrievalServer.getStorage(storage)).isNotNull();
         assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
-        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id", id + "");
     }
-
 
 
     @Test
@@ -306,10 +305,10 @@ public class ImageResourceTest {
 
         String storage = DEFAULT_STORAGE;
 
-        File file = new File(IMAGE_PATHS[(int)(8)]);
-        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(8)])));
+        File file = new File(IMAGE_PATHS[(int) (8)]);
+        MockMultipartFile firstFile = new MockMultipartFile("file", file.getName(), "image/png", Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (8)])));
 
-        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int)(8)])));
+        MockMultipartFile file1 = new MockMultipartFile(file.getName(), Files.readAllBytes(Paths.get(IMAGE_PATHS[(int) (8)])));
         MvcResult result = restStorageMockMvc.perform(
             fileUpload("/api/images")
                 .file(firstFile)
@@ -324,27 +323,27 @@ public class ImageResourceTest {
         Long id = Long.parseLong((String) map.get("id"));
 
         assertThat(retrievalServer.getStorage(storage).getProperties(id)).isNotNull();
-        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id",id+"");
+        assertThat(retrievalServer.getStorage(storage).getProperties(id)).containsEntry("id", id + "");
     }
 
     @Test
     @Transactional
     public void deleteStorage() throws Exception {
 
-        Long id = (long)99;
+        Long id = (long) 99;
         BufferedImage img = ImageIO.read(new File(IMAGE_PATHS[0]));
-        Map<String,String> properties = new TreeMap<>();
-        properties.put("path",IMAGE_PATHS[0]);
-        properties.put("date",new Date().toString());
+        Map<String, String> properties = new TreeMap<>();
+        properties.put("path", IMAGE_PATHS[0]);
+        properties.put("date", new Date().toString());
 
-        retrievalServer.getStorage(DEFAULT_STORAGE).indexPicture(img,id,properties);
+        retrievalServer.getStorage(DEFAULT_STORAGE).indexPicture(img, id, properties);
 
         System.out.println("TEST");
         System.out.println(retrievalServer.getInfos());
 
         assertThat(retrievalServer.getStorage(DEFAULT_STORAGE).getProperties(id)).isNotNull();
 
-        restStorageMockMvc.perform(delete("/api/storages/{storage}/images/{id}", DEFAULT_STORAGE,id)
+        restStorageMockMvc.perform(delete("/api/storages/{storage}/images/{id}", DEFAULT_STORAGE, id)
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
@@ -356,18 +355,17 @@ public class ImageResourceTest {
     public void deleteStorageNotExist() throws Exception {
 
         try {
-            MvcResult result  = restStorageMockMvc.perform(delete("/api/storages/{storage}/images/{id}", DEFAULT_STORAGE,999)
+            MvcResult result = restStorageMockMvc.perform(delete("/api/storages/{storage}/images/{id}", DEFAULT_STORAGE, 999)
                 .accept(TestUtil.APPLICATION_JSON_UTF8)).andReturn();
             assert false;
-        } catch(NestedServletException e) {
+        } catch (NestedServletException e) {
             assertThat(e.getCause().getClass()).isEqualTo(ResourceNotFoundException.class);
         }
     }
 
 
-
     private void printIfError(MvcResult result) {
-        if(result.getResolvedException()!=null) {
+        if (result.getResolvedException() != null) {
             System.out.println(result.getResolvedException().getMessage());
             System.out.println(result.getResolvedException().toString());
         }
@@ -376,13 +374,14 @@ public class ImageResourceTest {
 
     public static Map<String, Object> parseStringToMap(MvcResult result) throws java.io.IOException {
         String response = result.getResponse().getContentAsString();
-        System.out.println("response="+response);
+        System.out.println("response=" + response);
         ObjectReader reader = new ObjectMapper().reader(Map.class);
         return reader.readValue(response);
     }
+
     public static List<Map> parseStringToList(MvcResult result) throws java.io.IOException {
         String response = result.getResponse().getContentAsString();
-        System.out.println("response="+response);
+        System.out.println("response=" + response);
         ObjectReader reader = new ObjectMapper().reader(List.class);
         return reader.readValue(response);
     }
