@@ -149,49 +149,73 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-striped table-layout:fixed" style="width: 100%; white-space: nowrap; table-layout: fixed;">
-            <thead>
-            <col width="10%">
-            <col width="10%">
-            <col width="50%">
-            <col width="30%">
-                <tr>
-                    <!--<th>ID</th>-->
-                    <th>Id</th>
-                    <th>Storage</th>
-                    <th>Properties</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="image in images">
-                    <!--<td>{{image.id}}</td>-->
-                    <td>{{image.id}}</td>
-                    <td>{{image.storage}}</td>
-                    <td style="overflow: hidden; text-overflow: ellipsis;">
-                        {{image}}
-                    </td>
+        <p><strong>Page:</strong> {{tableParams.page()}}</p>
+        <p><strong>Count per page:</strong> {{tableParams.count()}}</p>
 
-                    <td>
-
-                        <!--<button type="submit"-->
-                                <!--ng-click="update(image.id)"-->
-                                <!--class="btn btn-default">-->
-                            <!--<span class="glyphicon glyphicon-pencil"></span> Edit-->
-                        <!--</button>-->
-                        <button type="submit"
-                                ng-click='delete(image)'
-                                class="btn btn-danger">
-                            <span class="glyphicon glyphicon-remove-circle"></span> Delete
-                        </button>
-                        <button type="submit"
-                                ng-click="printProperties(image)"
-                                class="btn btn-info">
-                            <span class="glyphicon glyphicon-list"></span> Full properties
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
+        <table ng-table="tableParams" class="table">
+            <tr ng-repeat="image in $data">
+                <td data-title="'id'">{{image.id}}</td>
+                <td data-title="'storage'">{{image.storage}}</td>
+                <td data-title="'properties'" style="overflow: hidden; text-overflow: ellipsis;">{{image}}</td>
+                <td data-title="''">
+                    <button type="submit"
+                            ng-click='delete(image)'
+                            class="btn btn-danger">
+                        <span class="glyphicon glyphicon-remove-circle"></span> Delete
+                    </button>
+                    <button type="submit"
+                            ng-click="printProperties(image)"
+                            class="btn btn-info">
+                        <span class="glyphicon glyphicon-list"></span> Full properties
+                    </button>
+                </td>
+            </tr>
         </table>
+
+
+        <!--<table class="table table-striped table-layout:fixed" style="width: 100%; white-space: nowrap; table-layout: fixed;">-->
+            <!--<thead>-->
+            <!--<col width="10%">-->
+            <!--<col width="10%">-->
+            <!--<col width="50%">-->
+            <!--<col width="30%">-->
+                <!--<tr>-->
+                    <!--&lt;!&ndash;<th>ID</th>&ndash;&gt;-->
+                    <!--<th>Id</th>-->
+                    <!--<th>Storage</th>-->
+                    <!--<th>Properties</th>-->
+                    <!--<th></th>-->
+                <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+                <!--<tr ng-repeat="image in images">-->
+                    <!--&lt;!&ndash;<td>{{image.id}}</td>&ndash;&gt;-->
+                    <!--<td>{{image.id}}</td>-->
+                    <!--<td>{{image.storage}}</td>-->
+                    <!--<td style="overflow: hidden; text-overflow: ellipsis;">-->
+                        <!--{{image}}-->
+                    <!--</td>-->
+
+                    <!--<td>-->
+
+                        <!--&lt;!&ndash;<button type="submit"&ndash;&gt;-->
+                                <!--&lt;!&ndash;ng-click="update(image.id)"&ndash;&gt;-->
+                                <!--&lt;!&ndash;class="btn btn-default">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<span class="glyphicon glyphicon-pencil"></span> Edit&ndash;&gt;-->
+                        <!--&lt;!&ndash;</button>&ndash;&gt;-->
+                        <!--<button type="submit"-->
+                                <!--ng-click='delete(image)'-->
+                                <!--class="btn btn-danger">-->
+                            <!--<span class="glyphicon glyphicon-remove-circle"></span> Delete-->
+                        <!--</button>-->
+                        <!--<button type="submit"-->
+                                <!--ng-click="printProperties(image)"-->
+                                <!--class="btn btn-info">-->
+                            <!--<span class="glyphicon glyphicon-list"></span> Full properties-->
+                        <!--</button>-->
+                    <!--</td>-->
+                <!--</tr>-->
+            <!--</tbody>-->
+        <!--</table>-->
     </div>
 </div>

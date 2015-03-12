@@ -1,8 +1,7 @@
 'use strict';
 
-retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$routeParams, Image,ImageByStorage, Storage) {
-
-
+retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$routeParams, Image,ImageByStorage, Storage,ngTableParams) {
+        $scope.data = [];
         $scope.cleanError = function() {
             $scope.image = {error : {create:null,delete:null}};
         };
@@ -12,7 +11,19 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
             if(param) {
                 $scope.images = ImageByStorage.query({storage:$routeParams["storage"]});
             } else {
-                $scope.images = Image.query();
+                $scope.images = Image.query(function(data) {
+                    console.log(data);
+                    $scope.data = data;
+                    $scope.tableParams = new ngTableParams({
+                        page: 1,            // show first page
+                        count: 3           // count per page
+                    }, {
+                        total: $scope.data.length, // length of data
+                        getData: function($defer, params) {
+                            $defer.resolve($scope.data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                        }
+                    });
+                });
             }
         };
         $scope.list($routeParams["storage"]);
@@ -135,6 +146,8 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
         $scope.onFileSelect = function($files) {
             $scope.filesToUpload = $files;
         };
+
+
 });
 
 //inject angular file upload directives and service.
