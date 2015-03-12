@@ -39,21 +39,31 @@
                                 <span translate="global.menu.home">Home</span>
                             </a>
                         </li>
-                        <li ng-switch-when="true" class="dropdown pointer">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="">
-                                <span>
-                                    <span class="glyphicon glyphicon-th-list"></span>
-                                    <span class="hidden-tablet" translate="global.menu.entities.main">
-                                        Entities
-                                    </span>
-                                    <b class="caret"></b>
-                                </span>
+                        <li ng-switch-when="true">
+                            <a href="#/image">
+                                <span class="glyphicon glyphicon-picture"></span>
+                                <span>Images</span>
                             </a>
-                            <ul class="dropdown-menu" ng-controller="MenuController">
-                                <li ng-switch-when="true"><a href="#/storage"><span class="glyphicon glyphicon-asterisk"></span>&nbsp;storages</a></li>
-                                <li ng-switch-when="true"><a href="#/image"><span class="glyphicon glyphicon-asterisk"></span>&nbsp;images</a></li>
-                                <!-- JHipster will add entities to the menu here -->
-                            </ul>
+                            <!--<a class="dropdown-toggle" data-toggle="dropdown" href="">-->
+                                <!--<span>-->
+                                    <!--<span class="glyphicon glyphicon-th-list"></span>-->
+                                    <!--<span class="hidden-tablet" translate="global.menu.entities.main">-->
+                                        <!--Entities-->
+                                    <!--</span>-->
+                                    <!--<b class="caret"></b>-->
+                                <!--</span>-->
+                            <!--</a>-->
+                            <!--<ul class="dropdown-menu" ng-controller="MenuController">-->
+                                <!--<li ng-switch-when="true"><a href="#/storage"><span class="glyphicon glyphicon-asterisk"></span>&nbsp;storages</a></li>-->
+                                <!--<li ng-switch-when="true"><a href="#/image"><span class="glyphicon glyphicon-asterisk"></span>&nbsp;images</a></li>-->
+                                <!--&lt;!&ndash; JHipster will add entities to the menu here &ndash;&gt;-->
+                            <!--</ul>-->
+                        </li>
+                        <li ng-switch-when="true">
+                            <a href="#/storage">
+                                <span class="glyphicon glyphicon-hdd"></span>
+                                <span>Storages</span>
+                            </a>
                         </li>
                         <li class="dropdown pointer">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="">
@@ -104,20 +114,20 @@
                                     &nbsp;<span translate="global.menu.account.apidocs">API Docs</span></a></li>
                             </ul>
                         </li>
-                        <li class="dropdown pointer" ng-controller="LanguageController">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="">
-                                <span>
-                                    <span class="glyphicon glyphicon-flag"></span>
-                                    <span class="hidden-tablet" translate="global.menu.language">Language</span>
-                                    <b class="caret"></b>
-                                </span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li active-menu="{{key}}" ng-repeat="(key, language) in languages">
-                                    <a href="" ng-click="changeLanguage(key)">{{language}}</a>
-                                </li>
-                            </ul>
-                        </li>
+                        <!--<li class="dropdown pointer" ng-controller="LanguageController">-->
+                            <!--<a class="dropdown-toggle" data-toggle="dropdown" href="">-->
+                                <!--<span>-->
+                                    <!--<span class="glyphicon glyphicon-flag"></span>-->
+                                    <!--<span class="hidden-tablet" translate="global.menu.language">Language</span>-->
+                                    <!--<b class="caret"></b>-->
+                                <!--</span>-->
+                            <!--</a>-->
+                            <!--<ul class="dropdown-menu">-->
+                                <!--<li active-menu="{{key}}" ng-repeat="(key, language) in languages">-->
+                                    <!--<a href="" ng-click="changeLanguage(key)">{{language}}</a>-->
+                                <!--</li>-->
+                            <!--</ul>-->
+                        <!--</li>-->
                     </ul>
                 </div>
             </div>
@@ -126,7 +136,13 @@
             <div class="well" ng-view=""></div>
 
             <div class="footer">
-                <p translate="footer">This is your footer</p>
+                <p>
+                    <ul>
+                        <li><a href="https://github.com/loic911/CBIRestAPI">Get the source code for this project</a> (Github).</li>
+                        <li><a href="https://github.com/loic911/CBIRetrieval">Get the source code for the content based image retrieval lib</a> (Github).</li>
+                    </ul>
+
+                </p>
             </div>
         </div>
 
