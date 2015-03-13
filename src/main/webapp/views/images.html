@@ -151,11 +151,14 @@
     <div class="table-responsive">
         <p><strong>Page:</strong> {{tableParams.page()}}</p>
         <p><strong>Count per page:</strong> {{tableParams.count()}}</p>
-
-        <table ng-table="tableParams" class="table">
+        <table ng-table="tableParams" class="table" show-filter="true">
+        <col width="10%">
+        <col width="10%">
+        <col width="50%">
+        <col width="30%">
             <tr ng-repeat="image in $data">
-                <td data-title="'id'">{{image.id}}</td>
-                <td data-title="'storage'">{{image.storage}}</td>
+                <td data-title="'id'" filter="{ 'id': 'text' }">{{image.id}}</td>
+                <td data-title="'storage'" filter="{ 'storage': 'text' }">{{image.storage}}</td>
                 <td data-title="'properties'" style="overflow: hidden; text-overflow: ellipsis;">{{image}}</td>
                 <td data-title="''">
                     <button type="submit"

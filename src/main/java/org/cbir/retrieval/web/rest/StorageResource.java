@@ -39,6 +39,7 @@ public class StorageResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
     public void create(@RequestBody StorageJSON storageJSON) throws ResourceAlreadyExistException {
         log.debug("REST request to save storage : {}", storageJSON.getId());
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
@@ -59,7 +60,6 @@ public class StorageResource {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Timed
-    @RolesAllowed(AuthoritiesConstants.USER)
     List<StorageJSON> getAll() {
         log.debug("REST request to list storages : {}");
 
@@ -79,7 +79,6 @@ public class StorageResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    @RolesAllowed(AuthoritiesConstants.USER)
     ResponseEntity<StorageJSON> get(@PathVariable String id) throws ResourceNotFoundException {
         log.debug("REST request to get storage : {}");
 
@@ -100,6 +99,7 @@ public class StorageResource {
         method = RequestMethod.DELETE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
     public void delete(@PathVariable String id) throws Exception {
         log.debug("REST request to delete storage : {}", id);
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();

@@ -155,6 +155,7 @@ public class ImageResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
     public ResponseEntity<Map<String, String>> create(
         @RequestParam(value = "id", required = false) Long idImage,
         @RequestParam(value = "storage", required = false) String idStorage,
@@ -223,6 +224,7 @@ public class ImageResource {
         method = RequestMethod.DELETE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
     public void delete(
         @PathVariable Long id,
         @PathVariable String storage
@@ -249,6 +251,7 @@ public class ImageResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
     ResponseEntity<ResultsJSON> search(
         @RequestParam(defaultValue = "30") Integer max,
         @RequestParam(defaultValue = "") String storages,
@@ -272,6 +275,7 @@ public class ImageResource {
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
     ResponseEntity<ResultsJSON> search(
         @RequestParam(defaultValue = "30") Integer max,
         @RequestParam(defaultValue = "") String storages,

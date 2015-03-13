@@ -1,31 +1,76 @@
 'use strict';
 
-retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$routeParams, Image,ImageByStorage, Storage,ngTableParams) {
+retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$routeParams, Image,ImageByStorage, Storage,ngTableParams,$filter) {
         $scope.data = [];
         $scope.cleanError = function() {
             $scope.image = {error : {create:null,delete:null}};
         };
         $scope.cleanError();
 
+        var getImages = function() {
+            return $scope.data;
+        };
+
+        $scope.createTable = function(data) {
+
+                $scope.tableParams = new ngTableParams({
+                    page: 1,            // show first page
+                    count: 3           // count per page
+                }, {
+                    total: getImages().length, // length of data
+                    getData: function($defer, params) {
+                        console.log("***********getData");
+                        //$defer.resolve($scope.data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                        // use build-in angular filter
+                        var orderedData = params.filter() ?
+                            $filter('filter')(getImages(), params.filter()) : getImages();
+
+                        $scope.data = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
+
+                        params.total(orderedData.length); // set total for recalc pagination
+                        $defer.resolve($scope.data);
+                    }
+                });
+            //$scope.tableParams.reload();
+            //    console.log($scope.tableParams);
+
+            };
+
+
         $scope.list = function(param) {
             if(param) {
-                $scope.images = ImageByStorage.query({storage:$routeParams["storage"]});
+                $scope.images = ImageByStorage.query({storage:$routeParams["storage"]},function(data) {
+                    if($scope.tableParams) {
+                        console.log("table exist");
+                        $scope.data = data;
+                        $scope.tableParams.reload();
+                    } else {
+                        console.log("table not exist");
+                        $scope.data = data;
+                        $scope.createTable(data);
+                    }
+
+                });
             } else {
                 $scope.images = Image.query(function(data) {
-                    console.log(data);
-                    $scope.data = data;
-                    $scope.tableParams = new ngTableParams({
-                        page: 1,            // show first page
-                        count: 3           // count per page
-                    }, {
-                        total: $scope.data.length, // length of data
-                        getData: function($defer, params) {
-                            $defer.resolve($scope.data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-                        }
-                    });
+                    if($scope.tableParams) {
+                        console.log("table exist");
+                        $scope.data = data;
+                        $scope.tableParams.reload();
+                    } else {
+                        console.log("table not exist");
+                        $scope.data = data;
+                        $scope.createTable(data);
+                    }
                 });
             }
         };
+
+
+
+
+
+
         $scope.list($routeParams["storage"]);
 
         $scope.storageChanged = function(selected) {
