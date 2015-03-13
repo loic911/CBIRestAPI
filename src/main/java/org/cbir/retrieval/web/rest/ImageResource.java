@@ -255,7 +255,8 @@ public class ImageResource {
     ResponseEntity<ResultsJSON> search(
         @RequestParam(defaultValue = "30") Integer max,
         @RequestParam(defaultValue = "") String storages,
-        @RequestParam("file") MultipartFile file
+        @RequestParam("file") MultipartFile file,
+        @RequestParam(value = "saveImage",defaultValue = "false") Boolean saveimage
     ) throws CBIRException, IOException {
         log.debug("REST request to get CBIR results : max=" + max + " storages=" + storages);
         BufferedImage image = null;
@@ -267,7 +268,7 @@ public class ImageResource {
             throw new ResourceNotValidException("Image not valid:" + ex.toString());
         }
         log.info(storeImageService + " " );
-        return doSearchSim(max, storages, image);
+        return doSearchSim(max, storages, image,saveimage);
     }
 
 
@@ -279,7 +280,8 @@ public class ImageResource {
     ResponseEntity<ResultsJSON> search(
         @RequestParam(defaultValue = "30") Integer max,
         @RequestParam(defaultValue = "") String storages,
-        @RequestParam() String url
+        @RequestParam() String url,
+        @RequestParam(value = "saveImage",defaultValue = "false") Boolean saveimage
     ) throws CBIRException, IOException {
         log.debug("REST request to get CBIR results : max=" + max + " storages=" + storages);
         BufferedImage image = null;
@@ -289,7 +291,7 @@ public class ImageResource {
             throw new ResourceNotValidException("Image not valid:" + ex.toString());
         }
         log.info(storeImageService + " " );
-        return doSearchSim(max, storages, image);
+        return doSearchSim(max, storages, image,saveimage);
     }
 
 
@@ -332,7 +334,7 @@ public class ImageResource {
     }
 
 
-    private ResponseEntity<ResultsJSON> doSearchSim(Integer max, String storages, BufferedImage image) throws ResourceNotValidException, IOException {
+    private ResponseEntity<ResultsJSON> doSearchSim(Integer max, String storages, BufferedImage image, Boolean saveImage) throws ResourceNotValidException, IOException {
         String[] storagesArray = new String[0];
         if (!storages.isEmpty()) {
             storagesArray = storages.split(";");
@@ -345,7 +347,9 @@ public class ImageResource {
         try {
             rs = retrievalClient.search(image, max, storagesArray);
             log.info(storeImageService + " " + searchId);
-            storeImageService.saveSearchImage(searchId,image);
+            if(saveImage) {
+                storeImageService.saveSearchImage(searchId,image);
+            }
         } catch (retrieval.exception.CBIRException e) {
             throw new ResourceNotValidException("Cannot process CBIR request:" + e);
         }

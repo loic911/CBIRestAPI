@@ -60,28 +60,8 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         if (env.acceptsProfiles(Constants.SPRING_PROFILE_DEVELOPMENT)) {
             initH2Console(servletContext);
         }
-
-//        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-//        ctx.register(ApplicationWebXml.class);
-//        ctx.setServletContext(servletContext);
-//        ctx.refresh();
-//        ServletRegistration.Dynamic dynamic = servletContext.addServlet("dispatcher", new DispatcherServlet(ctx));
-//        dynamic.addMapping("/");
-//        dynamic.setLoadOnStartup(1);
-//        dynamic.setMultipartConfig(ctx.getBean(MultipartConfigElement.class));
-
         log.info("Web application fully configured");
     }
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Set up Mime types.
@@ -188,24 +168,4 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         h2ConsoleServlet.setLoadOnStartup(1);
     }
 
-//    @Bean(name = "multipartResolver")
-//    public CommonsMultipartResolver commonsMultipartResolver(){
-//        CommonsMultipartResolver c = new CommonsMultipartResolver();
-//        c.setMaxUploadSize(100000000);
-//        return c;
-//    }
-//
-//    @Bean
-//    public CommonsMultipartResolver multipartResolver(){
-//        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-//        resolver.setMaxUploadSize(100000000);
-//        return resolver;
-//    }
-
-//    @Bean(name = "multipartResolver")
-//    public CommonsMultipartResolver multipartResolver(){
-//        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-//        resolver.setMaxUploadSize(100000000);
-//        return resolver;
-//    }
 }

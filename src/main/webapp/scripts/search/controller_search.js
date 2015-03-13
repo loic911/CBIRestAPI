@@ -52,7 +52,7 @@ retrievalApp.controller('SearchController',  function ($location,$scope,Storage,
         $http(
             {url:'/api/searchUrl',
                 method:'POST',
-                params: {url:url,max:max,storages:storages}}
+                params: {url:url,max:max,storages:storages,saveImage:true}}
         ).success(function(data, status, headers, config) {
                 console.log(data);
                 $scope.cleanError();
@@ -67,7 +67,7 @@ retrievalApp.controller('SearchController',  function ($location,$scope,Storage,
 
     $scope.searchMultipart = function(files,max,storages) {
             console.log(files);
-            var url = '/api/search?max='+max+"&storages="+storages;
+            var url = '/api/search?max='+max+"&storages="+storages + "&saveImage=true";
 
             //$files: an array of files selected, each file has name, size, and type.
             for (var i = 0; i < files.length; i++) {

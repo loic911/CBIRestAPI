@@ -31,29 +31,6 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
                 .sources(Application.class);
     }
 
-    // Other methods omitted
-
-    // Other methods omitted
-//    @Bean
-//    public MultipartResolver multipartResolver() {
-//        return new StandardServletMultipartResolver();
-//    }
-//
-//    @Bean
-//    public MultipartConfigElement multipartConfigElement() {
-//        MultipartConfigFactory factory = new MultipartConfigFactory();
-//        factory.setMaxFileSize("128KB");
-//        factory.setMaxRequestSize("128KB");
-//        return factory.createMultipartConfig();
-//    }
-//    @Bean
-//    public CommonsMultipartResolver multipartResolver() {
-//        CommonsMultipartResolver c = new CommonsMultipartResolver();
-//        c.setMaxUploadSize(100000000);
-//        return c;
-//    }
-
-
     /**
      * Set a default profile if it has not been set.
      * <p/>
