@@ -12,8 +12,8 @@ async:
     queueCapacity: 10000
 
 spring:
-    
-    
+
+
     datasource:
         dataSourceClassName: org.h2.jdbcx.JdbcDataSource
         url: jdbc:h2:mem:retrieval;DB_CLOSE_DELAY=-1
@@ -57,3 +57,6 @@ swagger:
     contact:
     license: Apache 2.0
     licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.html
+
+multipart:
+    maxFileSize: -1
