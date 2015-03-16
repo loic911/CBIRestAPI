@@ -1,3 +1,6 @@
+server:
+    port: 9999
+
 # Disable the spring security default configuration from spring-boot-actuator
 management.security.enabled: true
 security.basic.enabled: false
