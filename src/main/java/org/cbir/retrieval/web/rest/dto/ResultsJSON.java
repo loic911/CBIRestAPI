@@ -21,10 +21,10 @@ public class ResultsJSON {
         this.id = id;
         this.resultsSimilarities = resultsSimilarities;
     }
-
-    public Long getTotalSize() {
-        return (long)resultsSimilarities.getTotalSize();
-    }
+//
+//    public Long getTotalSize() {
+//        return (long)resultsSimilarities.getTotalSize();
+//    }
 
 //    public <T> List<List<T>> collate( List<T> list, int size, int step ) {
 //        return Stream.iterate(0, i -> i + step)
