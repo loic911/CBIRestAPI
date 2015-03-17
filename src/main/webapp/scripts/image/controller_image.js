@@ -8,7 +8,7 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
         $scope.cleanError();
 
         var getImages = function() {
-            return $scope.data;
+            return $scope.images;
         };
 
         $scope.createTable = function(data) {
@@ -25,14 +25,13 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
                         var orderedData = params.filter() ?
                             $filter('filter')(getImages(), params.filter()) : getImages();
 
+                        console.log(orderedData);
                         $scope.data = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
-
+                        console.log($scope.data);
                         params.total(orderedData.length); // set total for recalc pagination
                         $defer.resolve($scope.data);
                     }
                 });
-            //$scope.tableParams.reload();
-            //    console.log($scope.tableParams);
 
             };
 
