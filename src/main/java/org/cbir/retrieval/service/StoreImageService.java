@@ -21,8 +21,8 @@ import java.io.IOException;
 public class StoreImageService {
 
     //TODO: extract config external
-    public static String IMAGE_PATH_INDEX = "thumb/index";
-    public static String IMAGE_PATH_SEARCH = "thumb/search";
+    public static String IMAGE_PATH_INDEX = "/data/thumb/index";
+    public static String IMAGE_PATH_SEARCH = "/data/thumb/search";
     public static boolean SAVE_IMAGE = true;
     public static String NO_IMAGE_FOUND_PATH = "images/nothumb.png";
 
