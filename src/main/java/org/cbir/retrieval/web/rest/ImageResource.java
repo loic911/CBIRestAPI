@@ -10,6 +10,7 @@ import org.cbir.retrieval.web.rest.dto.ResultsJSON;
 import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -168,13 +169,6 @@ public class ImageResource {
         log.debug("REST request to create image : {}", idImage);
         RetrievalServer retrievalServer = retrievalService.getRetrievalServer();
 
-        Storage storage;
-        if (idStorage == null) {
-            storage = retrievalServer.getNextStorage();
-        } else {
-            storage = retrievalServer.getStorage(idStorage, true);
-        }
-
         BufferedImage image;
         try {
             System.out.println(file.getOriginalFilename());
@@ -184,41 +178,10 @@ public class ImageResource {
             throw new ResourceNotValidException("Image not valid:" + ex.toString());
         }
 
-
-        Map<String, String> properties = new TreeMap<>();
-        if (keys != null) {
-            String[] keysArray = keys.split(";");
-            String[] valuesArray = values.split(";");
-
-            if (keysArray.length != valuesArray.length) {
-                throw new ParamsNotValidException("keys.size()!=values.size()");
-            }
-
-            for (int i = 0; i < keysArray.length; i++) {
-                properties.put(keysArray[i], valuesArray[i]);
-            }
-        }
-
-        //index picture
-        Long id;
-        try {
-            if (async) {
-                id = storage.addToIndexQueue(image, idImage, properties);
-            } else {
-                id = storage.indexPicture(image, idImage, properties);
-            }
-        } catch (AlreadyIndexedException e) {
-            throw new ResourceAlreadyExistException("Image " + idImage + "already exist in storage " + idStorage);
-        } catch (NoValidPictureException e) {
-            throw new ResourceNotValidException("Cannot insert image:" + e.toString());
-        } catch (Exception e) {
-            throw new CBIRException("Cannot insert image:" + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        storeImageService.saveIndexImage(id, image);
-
-        return new ResponseEntity<>(storage.getProperties(id), HttpStatus.OK);
+        Map<String, String> result = indexPicture(idImage, idStorage, keys, values, async, image, retrievalServer);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
     @RequestMapping(value = "/storages/{storage}/images/{id}",
         method = RequestMethod.DELETE,
@@ -333,6 +296,40 @@ public class ImageResource {
         }
     }
 
+    @RequestMapping(value = "/images/full",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public void indexFull(
+        @RequestBody String json
+    ) throws CBIRException, IOException {
+        log.debug("REST request to INDEX FULL : json size"+json.length());
+        List<Object> list = new JacksonJsonParser().parseList(json);
+
+
+        for(Object entry : list) {
+            try {
+                Map map = (Map) entry;//new JacksonJsonParser().parseMap((String)entry);
+                Long id = Long.parseLong(map.get("id").toString());
+                String storage = map.get("storage").toString();
+                String cropURL = map.get("url").toString();
+                //read images if on disk
+                BufferedImage image = null;
+                try {
+                    image = storeImageService.readIndexImage(id);
+                } catch (Exception e) {
+                    image = ImageIO.read(new URL(cropURL));
+                }
+                indexPicture(id, storage, "", "", false, image, retrievalService.getRetrievalServer());
+            } catch(Exception e) {
+                log.error(e.toString());
+            }
+        }
+
+
+
+    }
 
     private ResponseEntity<ResultsJSON> doSearchSim(Integer max, String storages, BufferedImage image, Boolean saveImage) throws ResourceNotValidException, IOException {
         String[] storagesArray = new String[0];
@@ -358,6 +355,48 @@ public class ImageResource {
         return new ResponseEntity<>(new ResultsJSON(searchId,rs), HttpStatus.OK);
     }
 
+    private Map<String, String> indexPicture(Long idImage, String idStorage, String keys, String values, Boolean async, BufferedImage image, RetrievalServer retrievalServer) throws CBIRException, IOException {
+        Storage storage;
+        if (idStorage == null) {
+            storage = retrievalServer.getNextStorage();
+        } else {
+            storage = retrievalServer.getStorage(idStorage, true);
+        }
+
+        Map<String, String> properties = new TreeMap<>();
+        if (keys != null) {
+            String[] keysArray = keys.split(";");
+            String[] valuesArray = values.split(";");
+
+            if (keysArray.length != valuesArray.length) {
+                throw new ParamsNotValidException("keys.size()!=values.size()");
+            }
+
+            for (int i = 0; i < keysArray.length; i++) {
+                properties.put(keysArray[i], valuesArray[i]);
+            }
+        }
+
+        //index picture
+        Long id;
+        try {
+            if (async) {
+                id = storage.addToIndexQueue(image, idImage, properties);
+            } else {
+                id = storage.indexPicture(image, idImage, properties);
+            }
+        } catch (AlreadyIndexedException e) {
+            throw new ResourceAlreadyExistException("Image " + idImage + "already exist in storage " + idStorage);
+        } catch (NoValidPictureException e) {
+            throw new ResourceNotValidException("Cannot insert image:" + e.toString());
+        } catch (Exception e) {
+            throw new CBIRException("Cannot insert image:" + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        storeImageService.saveIndexImage(id, image);
+
+        return storage.getProperties(id);
+    }
 
     private static BufferedImage resizePicture(BufferedImage image, int targetWidth, int targetHeight) {
         int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
