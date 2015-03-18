@@ -15,7 +15,7 @@ retrievalApp.controller('ImageController',  function ($location,$scope,$upload,$
 
                 $scope.tableParams = new ngTableParams({
                     page: 1,            // show first page
-                    count: 3           // count per page
+                    count: 25           // count per page
                 }, {
                     total: getImages().length, // length of data
                     getData: function($defer, params) {

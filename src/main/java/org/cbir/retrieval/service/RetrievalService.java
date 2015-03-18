@@ -86,19 +86,21 @@ public class RetrievalService {
 
     public RetrievalServer buildRetrievalServerForDev() throws Exception {
         ConfigServer configServer = new ConfigServer("config/ConfigServer.prop");
-        configServer.setStoreName("MEMORY");
+        configServer.setStoreName("REDIS");
         RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
-        server.createStorage(DEFAULT_TEST_STORAGE);
-        server.createStorage(OTHER_STORAGE);
 
-        Map<String,String> properties = new TreeMap<>();
-        properties.put("date",new Date().toString());
+        if(configServer.getStoreName().equals("MEMORY")) {
+            server.createStorage(DEFAULT_TEST_STORAGE);
+            server.createStorage(OTHER_STORAGE);
 
-        indexPicture(server.getStorage(DEFAULT_TEST_STORAGE),ImageIO.read(new File("testdata/images/crop1.jpg")),1l, new HashMap<>(properties));
-        indexPicture(server.getStorage(DEFAULT_TEST_STORAGE),ImageIO.read(new File("testdata/images/crop2.jpg")),2l, new HashMap<>(properties));
-        indexPicture(server.getStorage(DEFAULT_TEST_STORAGE),ImageIO.read(new File("testdata/images/crop3.jpg")),3l, new HashMap<>(properties));
-        indexPicture(server.getStorage(OTHER_STORAGE),ImageIO.read(new File("testdata/images/crop4.jpg")),4l, new HashMap<>(properties));
+            Map<String, String> properties = new TreeMap<>();
+            properties.put("date", new Date().toString());
 
+            indexPicture(server.getStorage(DEFAULT_TEST_STORAGE), ImageIO.read(new File("testdata/images/crop1.jpg")), 1l, new HashMap<>(properties));
+            indexPicture(server.getStorage(DEFAULT_TEST_STORAGE), ImageIO.read(new File("testdata/images/crop2.jpg")), 2l, new HashMap<>(properties));
+            indexPicture(server.getStorage(DEFAULT_TEST_STORAGE), ImageIO.read(new File("testdata/images/crop3.jpg")), 3l, new HashMap<>(properties));
+            indexPicture(server.getStorage(OTHER_STORAGE), ImageIO.read(new File("testdata/images/crop4.jpg")), 4l, new HashMap<>(properties));
+        }
         return server;
     }
 
