@@ -296,7 +296,7 @@ public class ImageResource {
         }
     }
 
-    @RequestMapping(value = "/images/full",
+    @RequestMapping(value = "/index/full",
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -304,10 +304,10 @@ public class ImageResource {
     public void indexFull(
         @RequestBody String json
     ) throws CBIRException, IOException {
-        log.debug("REST request to INDEX FULL : json size"+json.length());
+        log.debug("REST request to INDEX FULL : json="+json);
         List<Object> list = new JacksonJsonParser().parseList(json);
 
-
+        log.debug(list.toString());
         for(Object entry : list) {
             try {
                 Map map = (Map) entry;//new JacksonJsonParser().parseMap((String)entry);
