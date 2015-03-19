@@ -32,6 +32,8 @@ public class SwaggerConfiguration implements EnvironmentAware {
 
     public static final String DEFAULT_INCLUDE_PATTERN = "/app/rest/.*";
 
+    public static final String API_PATTERN = "/api/.*";
+
     private RelaxedPropertyResolver propertyResolver;
 
     @Override
@@ -50,7 +52,8 @@ public class SwaggerConfiguration implements EnvironmentAware {
         SwaggerSpringMvcPlugin swaggerSpringMvcPlugin = new SwaggerSpringMvcPlugin(springSwaggerConfig)
             .apiInfo(apiInfo())
             .genericModelSubstitutes(ResponseEntity.class)
-            .includePatterns(DEFAULT_INCLUDE_PATTERN);
+            .includePatterns(DEFAULT_INCLUDE_PATTERN)
+            .includePatterns(API_PATTERN);
 
         swaggerSpringMvcPlugin.build();
         watch.stop();

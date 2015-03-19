@@ -409,11 +409,11 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', [
-        'clean:server',
-        'concurrent:test',
-        'autoprefixer',
-        'connect:test',
-        'karma'
+        //'clean:server',
+        //'concurrent:test',
+        //'autoprefixer',
+        //'connect:test',
+        //'karma'
     ]);
 
     grunt.registerTask('build', [
@@ -428,38 +428,38 @@ module.exports = function (grunt) {
         'replace',
         'uglify',
         'rev',
-        'usemin',
-        'htmlmin'
+        'usemin'
+        //'htmlmin'
     ]);
 
     grunt.registerTask('buildHeroku', [
-        'test',
+        //'test',
         'build',
         'copy:generateHerokuDirectory',
     ]);
 
     grunt.registerTask('deployHeroku', [
-        'test',
+        //'test',
         'build',
         'copy:generateHerokuDirectory',
         'buildcontrol:heroku'
     ]);
 
     grunt.registerTask('buildOpenshift', [
-        'test',
+        //'test',
         'build',
         'copy:generateOpenshiftDirectory',
     ]);
 
     grunt.registerTask('deployOpenshift', [
-        'test',
+        //'test',
         'build',
         'copy:generateOpenshiftDirectory',
         'buildcontrol:openshift'
     ]);
 
     grunt.registerTask('default', [
-        'test',
+        //'test',
         'build'
     ]);
 };

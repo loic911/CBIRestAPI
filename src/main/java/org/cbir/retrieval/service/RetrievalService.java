@@ -56,12 +56,13 @@ public class RetrievalService {
             if (envir.equals("dev")) {
                 server = buildRetrievalServerForDev();
             } else if (envir.equals("prod")) {
-                server = buildRetrievalServerForDev();
+                server = buildRetrievalServerForProd();
             } else {
                 server = buildRetrievalServerForTest();
             }
         } else server = buildRetrievalServerForTest();
-
+        log.info("server "+ server);
+        log.info("storages "+ server.getStorageList());
 
         servletContext.setAttribute("server",server);
         servletContext.setAttribute("client",buildRetrievalClient(server));
@@ -101,6 +102,14 @@ public class RetrievalService {
             indexPicture(server.getStorage(DEFAULT_TEST_STORAGE), ImageIO.read(new File("testdata/images/crop3.jpg")), 3l, new HashMap<>(properties));
             indexPicture(server.getStorage(OTHER_STORAGE), ImageIO.read(new File("testdata/images/crop4.jpg")), 4l, new HashMap<>(properties));
         }
+        return server;
+    }
+
+    public RetrievalServer buildRetrievalServerForProd() throws Exception {
+        ConfigServer configServer = new ConfigServer("config/ConfigServer.prop");
+        configServer.setStoreName("MEMORY");
+        RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
+
         return server;
     }
 

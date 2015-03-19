@@ -39,6 +39,11 @@ public class Application {
      */
     @PostConstruct
     public void initApplication() throws IOException {
+        log.info("*** initApplication ***");
+        log.info(System.getProperty("spring.profiles.active"));
+        log.info(Arrays.toString(env.getActiveProfiles()));
+
+
         if (env.getActiveProfiles().length == 0) {
             log.warn("No Spring profile configured, running with default configuration");
         } else {
@@ -76,6 +81,7 @@ public class Application {
      * Set a default profile if it has not been set
      */
     private static void addDefaultProfile(SpringApplication app, SimpleCommandLinePropertySource source) {
+
         if (!source.containsProperty("spring.profiles.active")) {
             app.setAdditionalProfiles(Constants.SPRING_PROFILE_DEVELOPMENT);
         }
