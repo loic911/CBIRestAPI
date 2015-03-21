@@ -373,11 +373,12 @@ public class ImageResourceTest {
     public void indexFullImage() throws Exception {
         // Validate the database is empty (only default storage)
         String storage = retrievalServer.getStorageList().get(0).getStorageName();
+        Long sizeBegin = retrievalServer.getStorage(storage).getNumberOfItem();
 
         // Create the Storage
         System.out.println("***********************");
 //        try {
-            MvcResult result = restStorageMockMvc.perform(post("/api/images/full")
+            MvcResult result = restStorageMockMvc.perform(post("/api/index/full")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(String.format("[{\"id\":\"%s\", \"storage\":\"%s\",\"url\":\"%s\"}]",
                     new Date().getTime()+"",
@@ -385,6 +386,8 @@ public class ImageResourceTest {
                     "https://www.google.be/images/srpr/logo11w.png"))).andReturn();
         printIfError(result);
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        assertThat(retrievalServer.getStorage(storage).getNumberOfItem()).isEqualTo(sizeBegin+1);
+
 //        } catch (NestedServletException e) {
 //            assertThat(e.getCause().getClass()).isEqualTo(ResourceAlreadyExistException.class);
 //        }
