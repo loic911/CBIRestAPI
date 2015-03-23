@@ -43,10 +43,13 @@ multipart:
 
 retrieval:
     config:
-        client: /data/retrieval/config/ConfigClient.prop
-        server: /data/retrieval/config/ConfigServer.prop
+        client: config/ConfigClient.prop
+        server: config/ConfigServer.prop
     store:
         name: MEMORY
     thumb:
-        index: /data/retrieval/thumb/index
-        search: /data/retrieval/thumb/search
+        index: thumb/index
+        search: thumb/search
+    dataset:
+        load: false
+        path: null

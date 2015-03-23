@@ -12,11 +12,15 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
+import retrieval.server.RetrievalServer;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 @ComponentScan
@@ -52,7 +56,12 @@ public class Application {
 
         try {
             log.info("init retrieval server");
-            retrievalService.initRetrievalServer();
+            RetrievalServer server = retrievalService.initRetrievalServer();
+
+            if(env.getProperty("retrieval.dataset.load").equals("true")) {
+                retrievalService.indexDataset(server,Paths.get(env.getProperty("retrieval.dataset.path")));
+
+            }
         } catch(Exception e) {
             e.printStackTrace();
             log.error(e.toString());

@@ -15,6 +15,7 @@ import retrieval.storage.Storage;
 import retrieval.storage.exception.AlreadyIndexedException;
 import retrieval.storage.exception.NoValidPictureException;
 import retrieval.storage.exception.PictureTooHomogeneous;
+import retrieval.storage.exception.TooMuchIndexRequestException;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -22,6 +23,9 @@ import javax.servlet.ServletContext;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -46,7 +50,7 @@ public class RetrievalService {
     @Autowired
     ServletContext servletContext;
 
-    public void initRetrievalServer() throws Exception{
+    public RetrievalServer initRetrievalServer() throws Exception{
         log.info("Init retrieval server");
         RetrievalServer server = null;
         String envir = "";
@@ -70,6 +74,7 @@ public class RetrievalService {
 
         servletContext.setAttribute("server",server);
         servletContext.setAttribute("client",buildRetrievalClient(server));
+        return server;
     }
 
     public RetrievalServer getRetrievalServer() {
@@ -120,7 +125,11 @@ public class RetrievalService {
     private void indexPicture(Storage storage,BufferedImage image,Long id, Map<String,String> properties) throws NoValidPictureException, AlreadyIndexedException, PictureTooHomogeneous, IOException {
         Long realId = storage.indexPicture(image,id,properties);
         storeImageService.saveIndexImage(realId,image);
+    }
 
+    private void indexPictureAsync(Storage storage,BufferedImage image,Long id, Map<String,String> properties) throws NoValidPictureException, AlreadyIndexedException, PictureTooHomogeneous, IOException, TooMuchIndexRequestException {
+        Long realId = storage.addToIndexQueue(image, id, properties);
+        storeImageService.saveIndexImage(realId,image);
     }
 
 
@@ -130,6 +139,41 @@ public class RetrievalService {
 
     public void reset() throws Exception {
         initRetrievalServer();
+    }
+
+    public void indexDataset(RetrievalServer server,Path dataset) throws Exception {
+        if(Files.exists(dataset)) {
+            int nbstorage = 4;
+            for(int i=1;i<=nbstorage;i++) {
+                server.createStorage(i+"");
+            }
+            long id = 0;
+            Files.walk(dataset).forEach(filePath -> {
+                try {
+                    if (Files.isRegularFile(filePath) && !Files.isHidden(filePath)) {
+                        log.info("Process file: "+filePath);
+                        String filename = filePath.getFileName().toString().split("\\.")[0];
+                        try {
+                            indexPictureAsync(
+                                server.getStorage(String.valueOf(new Random().nextInt(nbstorage) + 1)),
+                                ImageIO.read(filePath.toFile()), Long.parseLong(filename), new HashMap<>());
+                        } catch (NoValidPictureException e) {
+                            e.printStackTrace();
+                        } catch (AlreadyIndexedException e) {
+                            e.printStackTrace();
+                        } catch (PictureTooHomogeneous pictureTooHomogeneous) {
+                            pictureTooHomogeneous.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (TooMuchIndexRequestException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else throw new IOException("Path "+dataset.toAbsolutePath() +" does not exists");
     }
 
 }

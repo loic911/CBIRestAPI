@@ -63,7 +63,7 @@ multipart:
 
 retrieval:
     config:
-        client: /data/retrieval/config/ConfigClient.prop
-        server: /data/retrieval/config/ConfigServer.prop
+        client: config/ConfigClient.prop
+        server: config/ConfigServer.prop
     store:
         name: MEMORY
