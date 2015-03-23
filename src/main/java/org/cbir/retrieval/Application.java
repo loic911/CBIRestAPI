@@ -54,7 +54,8 @@ public class Application {
             log.info("init retrieval server");
             retrievalService.initRetrievalServer();
         } catch(Exception e) {
-            log.error(e.getMessage());
+            e.printStackTrace();
+            log.error(e.toString());
             throw new IOException(e.getMessage());
         }
 

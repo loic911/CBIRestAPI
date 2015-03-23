@@ -64,6 +64,10 @@ public class RetrievalService {
         log.info("server "+ server);
         log.info("storages "+ server.getStorageList());
 
+        if(server.getStorageList()==null || server.getStorageList().isEmpty()) {
+            server.createStorage(DEFAULT_TEST_STORAGE);
+        }
+
         servletContext.setAttribute("server",server);
         servletContext.setAttribute("client",buildRetrievalClient(server));
     }
@@ -78,16 +82,16 @@ public class RetrievalService {
 
 
     public RetrievalServer buildRetrievalServerForTest() throws Exception {
-        ConfigServer configServer = new ConfigServer("config/ConfigServer.prop");
-        configServer.setStoreName("MEMORY");
+        ConfigServer configServer = new ConfigServer(env.getProperty("retrieval.config.server"));
+        configServer.setStoreName(env.getProperty("retrieval.store.name"));
         RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
         server.createStorage(DEFAULT_TEST_STORAGE);
         return server;
     }
 
     public RetrievalServer buildRetrievalServerForDev() throws Exception {
-        ConfigServer configServer = new ConfigServer("config/ConfigServer.prop");
-        configServer.setStoreName("REDIS");
+        ConfigServer configServer = new ConfigServer(env.getProperty("retrieval.config.server"));
+        configServer.setStoreName(env.getProperty("retrieval.store.name"));
         RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
 
         if(configServer.getStoreName().equals("MEMORY")) {
@@ -106,8 +110,8 @@ public class RetrievalService {
     }
 
     public RetrievalServer buildRetrievalServerForProd() throws Exception {
-        ConfigServer configServer = new ConfigServer("config/ConfigServer.prop");
-        configServer.setStoreName("MEMORY");
+        ConfigServer configServer = new ConfigServer(env.getProperty("retrieval.config.server"));
+        configServer.setStoreName(env.getProperty("retrieval.store.name"));
         RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
 
         return server;
@@ -121,7 +125,7 @@ public class RetrievalService {
 
 
     public RetrievalClient buildRetrievalClient(RetrievalServer server) throws Exception {
-        return new RetrievalClient(new ConfigClient("config/ConfigClient.prop"),server);
+        return new RetrievalClient(new ConfigClient(env.getProperty("retrieval.config.client")),server);
     }
 
     public void reset() throws Exception {

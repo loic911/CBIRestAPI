@@ -40,3 +40,13 @@ swagger:
 
 multipart:
     maxFileSize: -1
+
+retrieval:
+    config:
+        client: /data/retrieval/config/ConfigClient.prop
+        server: /data/retrieval/config/ConfigServer.prop
+    store:
+        name: MEMORY
+    thumb:
+        index: /data/retrieval/thumb/index
+        search: /data/retrieval/thumb/search

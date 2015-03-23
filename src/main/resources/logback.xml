@@ -28,6 +28,7 @@
 -->
 
     <logger name="org.cbir.retrieval" level="DEBUG"/>
+    <logger name="retrieval.server" level="DEBUG"/>
 
     <logger name="javax.activation" level="WARN"/>
     <logger name="javax.xml.bind" level="WARN"/>
