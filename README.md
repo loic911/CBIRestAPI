@@ -1,4 +1,6 @@
 README for retrieval
 ==========================
 
-Full doc: http://loic911.github.io/cbirest/ (work in progress)
+Full documentation is here: http://loic911.github.io/cbirest/ (work in progress)
+
+
