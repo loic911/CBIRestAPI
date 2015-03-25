@@ -60,3 +60,10 @@ swagger:
 
 multipart:
     maxFileSize: -1
+
+retrieval:
+    config:
+        client: config/ConfigClient.prop
+        server: config/ConfigServer.prop
+    store:
+        name: MEMORY

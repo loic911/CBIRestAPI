@@ -22,8 +22,8 @@ import java.io.IOException;
 public class StoreImageService {
 
     //TODO: extract config external
-    public static String IMAGE_PATH_INDEX = "/data/thumb/index";
-    public static String IMAGE_PATH_SEARCH = "/data/thumb/search";
+//    public static String IMAGE_PATH_INDEX = "/data/thumb/index";
+//    public static String IMAGE_PATH_SEARCH = "/data/thumb/search";
     public static boolean SAVE_IMAGE = true;
     public static String NO_IMAGE_FOUND_PATH = "images/nothumb.png";
 
@@ -33,11 +33,11 @@ public class StoreImageService {
     private Environment env;
 
     public File saveIndexImage(Long id,BufferedImage image) throws IOException {
-        return saveImage(id,image,IMAGE_PATH_INDEX);
+        return saveImage(id,image,env.getProperty("retrieval.thumb.index"));
     }
 
     public File saveSearchImage(Long id,BufferedImage image) throws IOException {
-        return saveImage(id,image,IMAGE_PATH_SEARCH);
+        return saveImage(id,image,env.getProperty("retrieval.thumb.search"));
     }
 
     public File saveImage(Long id,BufferedImage image, String path) throws IOException {
@@ -58,11 +58,11 @@ public class StoreImageService {
     }
 
     public BufferedImage readIndexImage(Long id) throws IOException {
-        return readImage(id,IMAGE_PATH_INDEX);
+        return readImage(id,env.getProperty("retrieval.thumb.index"));
     }
 
     public BufferedImage readSearchImage(Long id) throws IOException {
-        return readImage(id,IMAGE_PATH_SEARCH);
+        return readImage(id,env.getProperty("retrieval.thumb.search"));
     }
 
     private BufferedImage readImage(Long id,String path) throws IOException {
