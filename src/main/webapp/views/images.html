@@ -149,8 +149,10 @@
     </div>
 
     <div class="table-responsive">
+        <p><strong>Total:</strong> {{getImages().length}}</p>
         <p><strong>Page:</strong> {{tableParams.page()}}</p>
         <p><strong>Count per page:</strong> {{tableParams.count()}}</p>
+
         <table ng-table="tableParams" class="table" show-filter="true">
         <col width="10%">
         <col width="10%">

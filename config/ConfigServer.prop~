@@ -6,7 +6,7 @@
 
 # Number of patch (N) for index request picture
 # HIGHT = better quality, bad perf
-NUMBEROFPATCH=1000
+NUMBEROFPATCH=500
 
 # Number of test vector (T), max 50
 # HIGHT = better quality, bad perf

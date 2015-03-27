@@ -6,7 +6,7 @@
 
 # Number of patch (N) for index request picture
 # HIGHT = better quality, bad perf
-NUMBEROFPATCH=1000
+NUMBEROFPATCH=500
 
 # Number of test vector (T), max 50
 # HIGHT = better quality, bad perf
@@ -16,7 +16,7 @@ NUMBEROFTV=5
 RESIZEMETHOD=3
 
 # Maximum NBT for a visual word (0 = no max). Avoid very big entry with all pictures
-INDEXCOMPRESSTHRESHOLD=5000
+INDEXCOMPRESSTHRESHOLD=0
 
 # Maximum percentage (between 0 and 1) of a word from a picture (0 = no max). Avoid too homogenous pictures
 MAXPERCTENTAGESIMILARWORD=0
@@ -111,8 +111,6 @@ KYOTOCACHECOMPRESS=50M
 ### REDIS
 ###
 ##################
-
-#DATABASES (redis.conf) must be equal to (S*T*1)+(S*3)+(S*T*1)
 
 # Redis host adress
 REDISHOST=localhost
