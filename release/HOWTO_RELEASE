@@ -1,0 +1,5 @@
+COPY template dir to CBIRest-$VERSION
+COPY two wars inside this directory
+Zip
+Goto https://github.com/loic911/CBIRestAPI/releases
+Publish new release

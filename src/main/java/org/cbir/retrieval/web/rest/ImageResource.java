@@ -171,14 +171,13 @@ public class ImageResource {
 
         BufferedImage image;
         try {
-            System.out.println(file.getOriginalFilename());
             byte[] data = file.getBytes();
             image = ImageIO.read(new ByteArrayInputStream(data));
         } catch (IOException ex) {
             throw new ResourceNotValidException("Image not valid:" + ex.toString());
         }
 
-        Map<String, String> result = indexPicture(idImage, idStorage, keys, values, async, image, retrievalServer);
+        Map<String, String> result = indexPicture(idImage, idStorage, keys, values, async, image, retrievalServer,true);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -323,13 +322,15 @@ public class ImageResource {
                 String storage = map.get("storage").toString();
                 String cropURL = map.get("url").toString();
                 //read images if on disk
+                boolean saveImage = true;
                 BufferedImage image = null;
                 try {
                     image = storeImageService.readIndexImage(id);
+                    saveImage = false; //don't save image, already on disk!
                 } catch (Exception e) {
                     image = ImageIO.read(new URL(cropURL));
                 }
-                indexPicture(id, storage, "", "", false, image, retrievalService.getRetrievalServer());
+                indexPicture(id, storage, "", "", false, image, retrievalService.getRetrievalServer(),saveImage);
             } catch(Exception e) {
                 log.error(e.toString());
             }
@@ -363,7 +364,7 @@ public class ImageResource {
         return new ResponseEntity<>(new ResultsJSON(searchId,rs), HttpStatus.OK);
     }
 
-    private Map<String, String> indexPicture(Long idImage, String idStorage, String keys, String values, Boolean async, BufferedImage image, RetrievalServer retrievalServer) throws CBIRException, IOException {
+    private Map<String, String> indexPicture(Long idImage, String idStorage, String keys, String values, Boolean async, BufferedImage image, RetrievalServer retrievalServer, boolean saveImage) throws CBIRException, IOException {
         Storage storage;
         if (idStorage == null) {
             storage = retrievalServer.getNextStorage();
@@ -401,7 +402,9 @@ public class ImageResource {
             throw new CBIRException("Cannot insert image:" + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        storeImageService.saveIndexImage(id, image);
+        if(saveImage) {
+            storeImageService.saveIndexImage(id, image);
+        }
 
         return storage.getProperties(id);
     }
