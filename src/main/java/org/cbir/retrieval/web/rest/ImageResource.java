@@ -243,13 +243,21 @@ public class ImageResource {
     ResponseEntity<ResultsJSON> search(
         @RequestParam(defaultValue = "30") Integer max,
         @RequestParam(defaultValue = "") String storages,
-        @RequestParam() String url,
+        @RequestParam(required = false) String url,
+        @RequestParam(required = false) Long id,
         @RequestParam(value = "saveImage",defaultValue = "false") Boolean saveimage
     ) throws CBIRException, IOException {
         log.debug("REST request to get CBIR results : max=" + max + " storages=" + storages);
         BufferedImage image = null;
+
+
         try {
-            image = ImageIO.read(new URL(url));
+
+            if(id!=null) {
+                image = storeImageService.readIndexImage(id);
+            } else {
+                image = ImageIO.read(new URL(url));
+            }
         } catch (IOException ex) {
             throw new ResourceNotValidException("Image not valid:" + ex.toString());
         }

@@ -210,4 +210,26 @@ public class SearchRetrievalTest {
 
         assertThat(result.getResponse().getStatus()).isEqualTo(400);
     }
+
+
+    @Test
+    public void testSearchImageWithThumb() throws Exception {
+        // Validate the database is empty (only default storage)
+        assertThat(retrievalServer.getSize()).isEqualTo(NUMBER_OF_PICTURES_AT_BEGINNING);
+
+        Long id = 5l;
+
+        File file = new File(IMAGE_PATHS[(int) (id - 1)]);
+
+        MvcResult result = restStorageMockMvc.perform(
+            post("/api/searchUrl")
+                .param("id", "2")
+        )
+            .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+
+        Map results = ImageResourceTest.parseStringToMap(result);
+        assertThat(results.get("id")).isNotNull();
+    }
 }
