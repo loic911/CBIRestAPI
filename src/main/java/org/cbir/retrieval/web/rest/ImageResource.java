@@ -244,17 +244,20 @@ public class ImageResource {
         @RequestParam(required = false) Long id,
         @RequestParam(value = "saveImage",defaultValue = "false") Boolean saveimage
     ) throws CBIRException, IOException {
-        log.debug("REST request to get CBIR results : max=" + max + " storages=" + storages);
+        log.debug("REST request to get CBIR results : max=" + max + " url=" + url + " id=" +id+" storages=" + storages);
         BufferedImage image = null;
-
 
         try {
 
             if(id!=null) {
-                image = storeImageService.readIndexImage(id);
-            } else {
+                image = storeImageService.tryReadIndexImage(id);
+            }
+
+            //if no id or id has no valid images
+            if(image==null) {
                 image = ImageIO.read(new URL(url));
             }
+
         } catch (IOException ex) {
             throw new ResourceNotValidException("Image not valid:" + ex.toString());
         }
@@ -262,44 +265,6 @@ public class ImageResource {
         return doSearchSim(max, storages, image,saveimage);
     }
 
-
-
-    @RequestMapping(value = "/images/{id}/thumb",
-        method = RequestMethod.GET,
-        produces = MediaType.IMAGE_PNG_VALUE)
-    @Timed
-    @RolesAllowed(AuthoritiesConstants.USER)
-    ResponseEntity<byte[]> getStoreImage(@PathVariable Long id,@RequestParam(required = false) Integer size,@RequestParam(required = false,defaultValue = "index") String type) throws ResourceNotFoundException, NoValidPictureException {
-        log.debug("REST request to get image thumb : " + id);
-
-        try {
-            BufferedImage image = null;
-            if(type.equals("index")) {
-               image = storeImageService.readIndexImage(id);
-            } else {
-                image = storeImageService.readSearchImage(id);
-            }
-
-            if(size!=null) {
-                SizeUtils sizeCompute = new SizeUtils(image.getWidth(),image.getHeight(),size,size);
-                sizeCompute = sizeCompute.computeThumbSize();
-                //resize image
-                image = resizePicture(image,sizeCompute.getWidth(),sizeCompute.getHeight());
-            }
-
-
-            final HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_PNG);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write( image, "png", baos );
-            baos.flush();
-            byte[] imageInByte = baos.toByteArray();
-            baos.close();
-            return new ResponseEntity<>(imageInByte, headers, HttpStatus.OK);
-        } catch(IOException e) {
-            throw new NoValidPictureException("Image with "+id + "cannot be read");
-        }
-    }
 
     @RequestMapping(value = "/index/file",
         method = RequestMethod.POST,
@@ -450,16 +415,4 @@ public class ImageResource {
         return storage.getProperties(id);
     }
 
-    private static BufferedImage resizePicture(BufferedImage image, int targetWidth, int targetHeight) {
-        int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, type);
-        Graphics2D g = resizedImage.createGraphics();
-        g.setComposite(AlphaComposite.Src);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        g.drawImage(image, 0, 0, targetWidth, targetHeight, null);
-        g.dispose();
-        return resizedImage;
-
-    }
 }

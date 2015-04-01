@@ -77,4 +77,15 @@ public class StoreImageService {
         return ImageIO.read(file);
     }
 
+    public BufferedImage tryReadIndexImage(Long id) throws IOException {
+        String path = env.getProperty("retrieval.thumb.index");
+        File dir = new File(path);
+        File file = new File(dir,id+".png");
+        log.info("Read IMAGE in "+file.getAbsolutePath());
+        if(file.exists()) {
+            return ImageIO.read(file);
+        }
+        return null;
+    }
+
 }
