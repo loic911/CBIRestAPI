@@ -33,9 +33,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -303,6 +301,52 @@ public class ImageResource {
         }
     }
 
+    @RequestMapping(value = "/index/file",
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public void indexFile(
+        @RequestParam(required = true) String file,
+        @RequestParam(required = false,defaultValue = "false") Boolean async
+    ) throws CBIRException, IOException {
+        log.debug("REST request to INDEX FULL : file="+file + " async="+async);
+        log.debug("REST request to INDEX FULL : file="+new File(file).getAbsolutePath());
+            StringBuffer jsonString = new StringBuffer();
+
+            FileReader fr = new FileReader(new File(file));
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                jsonString.append(line);
+            }
+            br.close();
+            fr.close();
+
+        List<Object> list = new JacksonJsonParser().parseList(jsonString.toString());
+
+        for(Object entry : list) {
+            try {
+                Map map = (Map) entry;//new JacksonJsonParser().parseMap((String)entry);
+                Long id = Long.parseLong(map.get("id").toString());
+                String storage = map.get("storage").toString();
+                String cropURL = map.get("url").toString();
+                //read images if on disk
+                boolean saveImage = true;
+                BufferedImage image = null;
+                try {
+                    image = storeImageService.readIndexImage(id);
+                    saveImage = false; //don't save image, already on disk!
+                } catch (Exception e) {
+                    image = ImageIO.read(new URL(cropURL));
+                }
+                indexPicture(id, storage, "", "", async, image, retrievalService.getRetrievalServer(),saveImage);
+            } catch(Exception e) {
+                log.error(e.toString());
+            }
+        }
+    }
+
     @RequestMapping(value = "/index/full",
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
@@ -335,9 +379,6 @@ public class ImageResource {
                 log.error(e.toString());
             }
         }
-
-
-
     }
 
     private ResponseEntity<ResultsJSON> doSearchSim(Integer max, String storages, BufferedImage image, Boolean saveImage) throws ResourceNotValidException, IOException {

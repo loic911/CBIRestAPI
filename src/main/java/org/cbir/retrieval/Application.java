@@ -17,6 +17,7 @@ import retrieval.server.RetrievalServer;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +45,7 @@ public class Application {
     @PostConstruct
     public void initApplication() throws IOException {
         log.info("*** initApplication ***");
+        log.info("HOME="+new File("./").getAbsolutePath());
         log.info(System.getProperty("spring.profiles.active"));
         log.info(Arrays.toString(env.getActiveProfiles()));
 
