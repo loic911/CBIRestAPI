@@ -1,10 +1,11 @@
 package org.cbir.retrieval;
 
 import org.cbir.retrieval.config.Constants;
+import org.cbir.retrieval.domain.User;
 import org.cbir.retrieval.service.RetrievalService;
+import org.cbir.retrieval.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.MetricFilterAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricRepositoryAutoConfiguration;
@@ -16,11 +17,9 @@ import retrieval.server.RetrievalServer;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Optional;
@@ -38,6 +37,9 @@ public class Application {
     @Inject
     private RetrievalService retrievalService;
 
+    @Inject
+    private UserService userService;
+
     /**
      * Initializes retrieval.
      * <p/>
@@ -51,21 +53,7 @@ public class Application {
         log.info(System.getProperty("spring.profiles.active"));
         log.info(Arrays.toString(env.getActiveProfiles()));
 
-//        String filename = "password.txt";
-//        File passwordFile = new File(filename);
-//        if(passwordFile.exists()) {
-//            Stream<String> lines = Files.lines(Paths.get(filename));
-//            Optional<String> hasPassword = lines.findFirst();
-//            if(hasPassword.isPresent()){
-//
-//            }
-//            lines.close();
-//        }
-//
-//        if(passwordFile.delete()) {
-//            throw new IOException("Password file cannot be deleted:"+passwordFile.getAbsolutePath());
-//        }
-
+        changePasswordIfNeeded();
 
         if (env.getActiveProfiles().length == 0) {
             log.warn("No Spring profile configured, running with default configuration");
@@ -85,6 +73,30 @@ public class Application {
             e.printStackTrace();
             log.error(e.toString());
             throw new IOException(e.getMessage());
+        }
+
+
+    }
+
+    private void changePasswordIfNeeded() throws IOException {
+        String filename = "password.txt";
+        File passwordFile = new File(filename);
+        log.info("check if " + passwordFile.getAbsolutePath() + " exists");
+        if(passwordFile.exists()) {
+            log.info("password file found, change password");
+            Stream<String> lines = Files.lines(Paths.get(filename));
+            Optional<String> hasPassword = lines.findFirst();
+            if(hasPassword.isPresent()){
+                User admin = userService.getUser("admin");
+                userService.changePassword(admin,hasPassword.get());
+
+                User user = userService.getUser("user");
+                userService.changePassword(user,hasPassword.get());
+            }
+            lines.close();
+            if(!passwordFile.delete()) {
+                throw new IOException("Password file cannot be deleted:"+passwordFile.getAbsolutePath());
+            }
         }
 
 

@@ -109,6 +109,10 @@ public class UserService {
         return currentUser;
     }
 
+    public User getUser(String username) {
+        return userRepository.findOne(username);
+    }
+
     /**
      * Persistent Token are used for providing automatic authentication, they should be automatically deleted after
      * 30 days.
