@@ -23,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class})
@@ -48,6 +50,21 @@ public class Application {
         log.info("HOME="+new File("./").getAbsolutePath());
         log.info(System.getProperty("spring.profiles.active"));
         log.info(Arrays.toString(env.getActiveProfiles()));
+
+//        String filename = "password.txt";
+//        File passwordFile = new File(filename);
+//        if(passwordFile.exists()) {
+//            Stream<String> lines = Files.lines(Paths.get(filename));
+//            Optional<String> hasPassword = lines.findFirst();
+//            if(hasPassword.isPresent()){
+//
+//            }
+//            lines.close();
+//        }
+//
+//        if(passwordFile.delete()) {
+//            throw new IOException("Password file cannot be deleted:"+passwordFile.getAbsolutePath());
+//        }
 
 
         if (env.getActiveProfiles().length == 0) {
