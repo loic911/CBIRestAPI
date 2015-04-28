@@ -8,8 +8,20 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-/**
- * Created by lrollus on 20/02/15.
+/*
+ * Copyright (c) 2009-2015. Authors: see NOTICE file.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 public class ResultsJSON {
 
@@ -21,22 +33,6 @@ public class ResultsJSON {
         this.id = id;
         this.resultsSimilarities = resultsSimilarities;
     }
-//
-//    public Long getTotalSize() {
-//        return (long)resultsSimilarities.getTotalSize();
-//    }
-
-//    public <T> List<List<T>> collate( List<T> list, int size, int step ) {
-//        return Stream.iterate(0, i -> i + step)
-//            .limit((list.size() / step) + 1)
-//            .map(i -> list.stream()
-//                .skip( i )
-//                .limit( size )
-//                .collect( Collectors.toList() ) )
-//            .filter( i -> !i.isEmpty() )
-//            .collect( Collectors.toList() ) ;
-//    }
-
     public Long getId() {
         return id;
     }

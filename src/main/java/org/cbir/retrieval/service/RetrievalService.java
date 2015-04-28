@@ -1,5 +1,19 @@
 package org.cbir.retrieval.service;
-
+/*
+ * Copyright (c) 2009-2015. Authors: see NOTICE file.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +39,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -35,9 +48,9 @@ import java.util.*;
 @Transactional
 public class RetrievalService {
 
-    public static String DEFAULT_TEST_STORAGE = "default";
-    public static String DEFAULT_STORAGE = "dev";
-    public static String OTHER_STORAGE = "abc";
+    public static final String DEFAULT_TEST_STORAGE = "default";
+    public static final String DEFAULT_STORAGE = "dev";
+    public static final String OTHER_STORAGE = "abc";
 
     private final Logger log = LoggerFactory.getLogger(RetrievalService.class);
 
@@ -117,9 +130,7 @@ public class RetrievalService {
     public RetrievalServer buildRetrievalServerForProd() throws Exception {
         ConfigServer configServer = new ConfigServer(env.getProperty("retrieval.config.server"));
         configServer.setStoreName(env.getProperty("retrieval.store.name"));
-        RetrievalServer server = new RetrievalServer(configServer,"cbir",false);
-
-        return server;
+        return new RetrievalServer(configServer,"cbir",false);
     }
 
     private void indexPicture(Storage storage,BufferedImage image,Long id, Map<String,String> properties) throws NoValidPictureException, AlreadyIndexedException, PictureTooHomogeneous, IOException {
@@ -157,20 +168,12 @@ public class RetrievalService {
                             indexPictureAsync(
                                 server.getStorage(String.valueOf(new Random().nextInt(nbstorage) + 1)),
                                 ImageIO.read(filePath.toFile()), Long.parseLong(filename), new HashMap<>());
-                        } catch (NoValidPictureException e) {
-                            e.printStackTrace();
-                        } catch (AlreadyIndexedException e) {
-                            e.printStackTrace();
-                        } catch (PictureTooHomogeneous pictureTooHomogeneous) {
-                            pictureTooHomogeneous.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (TooMuchIndexRequestException e) {
-                            e.printStackTrace();
+                        } catch (NoValidPictureException | PictureTooHomogeneous | AlreadyIndexedException | IOException | TooMuchIndexRequestException e) {
+                            log.error(e.toString());
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e.toString());
                 }
             });
         } else throw new IOException("Path "+dataset.toAbsolutePath() +" does not exists");

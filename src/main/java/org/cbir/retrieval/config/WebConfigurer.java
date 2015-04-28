@@ -3,7 +3,6 @@ package org.cbir.retrieval.config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
 import com.codahale.metrics.servlets.MetricsServlet;
-import org.cbir.retrieval.ApplicationWebXml;
 import org.cbir.retrieval.web.filter.CachingHttpHeadersFilter;
 import org.cbir.retrieval.web.filter.StaticResourcesProductionFilter;
 import org.cbir.retrieval.web.filter.gzip.GZipServletFilter;
@@ -15,13 +14,8 @@ import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletCont
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.MimeMappings;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.inject.Inject;
 import javax.servlet.*;

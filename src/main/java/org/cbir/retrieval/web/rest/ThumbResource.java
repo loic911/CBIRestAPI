@@ -1,25 +1,31 @@
 package org.cbir.retrieval.web.rest;
-
+/*
+ * Copyright (c) 2009-2015. Authors: see NOTICE file.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import com.codahale.metrics.annotation.Timed;
 import org.cbir.retrieval.security.AuthoritiesConstants;
 import org.cbir.retrieval.service.RetrievalService;
 import org.cbir.retrieval.service.StoreImageService;
-import org.cbir.retrieval.service.exception.*;
-import org.cbir.retrieval.web.rest.dto.ResultsJSON;
+import org.cbir.retrieval.service.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import retrieval.client.RetrievalClient;
-import retrieval.dist.ResultsSimilarities;
-import retrieval.server.RetrievalServer;
-import retrieval.storage.Storage;
-import retrieval.storage.exception.AlreadyIndexedException;
 import retrieval.storage.exception.NoValidPictureException;
 import retrieval.utils.SizeUtils;
 
@@ -28,11 +34,8 @@ import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * REST controller for managing images.

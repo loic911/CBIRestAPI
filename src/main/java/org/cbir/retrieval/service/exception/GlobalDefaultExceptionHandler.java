@@ -1,21 +1,28 @@
 package org.cbir.retrieval.service.exception;
 
 import org.cbir.retrieval.web.rest.dto.ExceptionJSON;
-import org.cbir.retrieval.web.rest.dto.StorageJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Created by lrollus on 01/03/15.
+/*
+ * Copyright (c) 2009-2015. Authors: see NOTICE file.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 @ControllerAdvice
 class GlobalDefaultExceptionHandler {
@@ -25,22 +32,6 @@ class GlobalDefaultExceptionHandler {
 
     @ExceptionHandler(value = CBIRException.class)
     public ResponseEntity<ExceptionJSON> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
-        System.out.println("****************************************");
-        System.out.println("****************************************");
-        System.out.println("****************************************");
-        System.out.println("*****************"+e);
-        System.out.println("****************************************");
-        System.out.println("****************************************");
-        System.out.println("****************************************");
-
-        // If the exception is annotated with @ResponseStatus rethrow it and let
-        // the framework handle it - like the OrderNotFoundException example
-        // at the start of this post.
-        // AnnotationUtils is a Spring Framework utility class.
-//        if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null)
-//            throw e;
-
-        // Otherwise setup and send the user to a default error-view.
         log.error(e.toString());
         if(e instanceof CBIRException) {
             return new ResponseEntity<ExceptionJSON>(new ExceptionJSON((CBIRException)e), ((CBIRException) e).getStatus());

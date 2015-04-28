@@ -14,7 +14,7 @@
     <version>0.2.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>retrieval</name>
+    <name>CBIRestAPI</name>
 
     <prerequisites>
         <maven>3.0.0</maven>

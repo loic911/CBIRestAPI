@@ -2,9 +2,6 @@ package org.cbir.retrieval.service.exception;
 
 import org.springframework.http.HttpStatus;
 
-/**
- * Created by lrollus on 01/03/15.
- */
 public class CBIRException extends Exception {
 
     private HttpStatus status;
