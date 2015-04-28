@@ -42,6 +42,27 @@
         <spring-cloud.version>1.1.0.RELEASE</spring-cloud.version>
         <swagger-springmvc.version>0.8.8</swagger-springmvc.version>
         <usertype-core.version>3.2.0.GA</usertype-core.version>
+
+
+        <sonar.sources>src/main</sonar.sources>
+        <sonar.language>java</sonar.language>
+        <!--<sonar.exclusions>src/main/java/retrieval/test/****.java</sonar.exclusions>-->
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+
+        <sonar.surefire.reportsPath>build/test/results</sonar.surefire.reportsPath>
+        <sonar.jacoco.reportPath>${basedir}/target/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPath>
+
+        <!--<sonar.jdbc.url>jdbc:postgresql://localhost/sonar</sonar.jdbc.url>
+        <sonar.jdbc.driver>org.postgresql.Driver</sonar.jdbc.driver>
+        <sonar.jdbc.username>postgres</sonar.jdbc.username>
+        <sonar.jdbc.password></sonar.jdbc.password>-->
+
+        <sonar.jdbc.url>jdbc:postgresql://localhost/sonar</sonar.jdbc.url>
+        <sonar.jdbc.driver>org.postgresql.Driver</sonar.jdbc.driver>
+        <sonar.jdbc.username>postgres</sonar.jdbc.username>
+        <sonar.jdbc.password></sonar.jdbc.password>
+        <!-- test -->
+        <sonar.host.url>http://sonar.cytomine.be</sonar.host.url>
     </properties>
 
     <dependencies>
@@ -680,6 +701,32 @@
                             </arguments>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.5.5.201112152213</version>
+                        <configuration>
+                            <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+                            <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>jacoco-initialize</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>jacoco-site</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+
                 </plugins>
             </build>
             <properties>
