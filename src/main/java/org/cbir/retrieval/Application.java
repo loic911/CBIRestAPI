@@ -15,7 +15,9 @@ package org.cbir.retrieval;
  * limitations under the License.
  */
 import org.cbir.retrieval.config.Constants;
+import org.cbir.retrieval.domain.Authority;
 import org.cbir.retrieval.domain.User;
+import org.cbir.retrieval.repository.UserRepository;
 import org.cbir.retrieval.service.RetrievalService;
 import org.cbir.retrieval.service.UserService;
 import org.slf4j.Logger;
@@ -36,7 +38,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @ComponentScan
@@ -53,6 +57,9 @@ public class Application {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private UserRepository userRepository;
 
     /**
      * Initializes retrieval.
@@ -100,11 +107,19 @@ public class Application {
             Stream<String> lines = Files.lines(Paths.get(filename));
             Optional<String> hasPassword = lines.findFirst();
             if(hasPassword.isPresent()){
-                User admin = userService.getUser("admin");
-                userService.changePassword(admin,hasPassword.get());
+                String username = hasPassword.get().split(":")[0];
+                String password = hasPassword.get().split(":")[1];
 
-                User user = userService.getUser("user");
-                userService.changePassword(user,hasPassword.get());
+                if(userService.getUser(username)==null) {
+                    log.info("add user '" + username + "' with password '"+password+"'");
+                    User user = userService.createUserInformation(username,password, "bot","bot","bot@me.com","en","ROLE_ADMIN");
+                    user.setCreatedBy("admin");
+                    user.setActivated(true);
+                    userRepository.save(user);
+                } else {
+                    log.info("change user '" + username + "' with password '"+password+"'");
+                    userService.changePassword(userService.getUser(username),hasPassword.get());
+                }
             }
             lines.close();
             if(!passwordFile.delete()) {

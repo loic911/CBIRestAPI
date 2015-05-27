@@ -60,8 +60,13 @@ public class UserService {
 
     public User createUserInformation(String login, String password, String firstName, String lastName, String email,
                                       String langKey) {
+        return createUserInformation(login,password,firstName,lastName,email,langKey,"ROLE_USER");
+    }
+
+    public User createUserInformation(String login, String password, String firstName, String lastName, String email,
+                                      String langKey, String role) {
         User newUser = new User();
-        Authority authority = authorityRepository.findOne("ROLE_USER");
+        Authority authority = authorityRepository.findOne(role);
         Set<Authority> authorities = new HashSet<>();
         String encryptedPassword = passwordEncoder.encode(password);
         newUser.setLogin(login);
