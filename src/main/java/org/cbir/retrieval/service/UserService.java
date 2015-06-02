@@ -66,7 +66,6 @@ public class UserService {
     public User createUserInformation(String login, String password, String firstName, String lastName, String email,
                                       String langKey, String role) {
         User newUser = new User();
-        Authority authority = authorityRepository.findOne(role);
         Set<Authority> authorities = new HashSet<>();
         String encryptedPassword = passwordEncoder.encode(password);
         newUser.setLogin(login);
@@ -80,7 +79,14 @@ public class UserService {
         newUser.setActivated(false);
         // new user gets registration key
         newUser.setActivationKey(RandomUtil.generateActivationKey());
-        authorities.add(authority);
+
+        if(role.equals("ROLE_ADMIN")) {
+            authorities.add(authorityRepository.findOne("ROLE_ADMIN")) ;
+            authorities.add(authorityRepository.findOne("ROLE_USER")) ;
+        } else {
+            authorities.add(authorityRepository.findOne("ROLE_USER")) ;
+        }
+
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
         log.debug("Created Information for User: {}", newUser);
